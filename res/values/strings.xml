@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ExpenseManager</string>
+    <string name="action_settings">Edit Contacts</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_category">Edit Category And Limit</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="addContactStr">Add Contact</string>
+    <string name="addContactHintText">Add Contact</string>
+    <string name="updateLimitHintText">Limit to mark red entries</string>
+    <string name="updateLimitButton">Update Limit</string>
+    <string name="titleLimitUpdate">Update the Limit value</string>
+    
+    <string name="addedContactsList">Added Contacts List</string>
+    <string name="chooseCategory">Category</string>
+	<string name="submit">Submit</string>
+	<string name="hint_category">Notes</string>
+	<string name="addCategoryStr">Add Category</string>
+    <string name="addCategoryHintText">Add Category here</string>
+    <string name="addedCategoryList">Added Category List</string>
+    <string name="floatingAcitivityTitle">Expense Manual</string>
+    
+    
+</resources>
