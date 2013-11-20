@@ -67,6 +67,7 @@ public class FragmentListYearly extends Fragment{
 		Log.d(TAG,"onPause");
 		lv_expenses.setAdapter(null);
 		adapter = null;
+		// add matrixCursor = null;
 		
 		
 	}
@@ -83,8 +84,10 @@ public class FragmentListYearly extends Fragment{
 	public void onResume() {
 		super.onResume();
 		Log.d(TAG,"onResume");
-		if(matrixCursor.getCount() == 0)
-			addDataToCursor();
+		// matrixCursor = new MatrixCursor(FROM);
+		//addDataToCursor();
+		if(matrixCursor.getCount() == 0) //remove this
+			addDataToCursor(); //remove this
 		adapter = new SimpleCursorAdapter(parentActivity, R.layout.row_yearly, matrixCursor, FROM, TO,0);
 	
 		lv_expenses.setAdapter(adapter);
