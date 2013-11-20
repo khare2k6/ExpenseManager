@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="fill_parent"
+        android:textSize="35sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text="@string/titleExpManager"
+        android:background="@android:color/background_dark"
+        android:textColor="@android:color/white"
+        android:layout_height="wrap_content"/>
+    
+<GridLayout 
+    android:id="@+id/grid_buddies"
+    android:layout_marginLeft="20dp"
+    android:layout_marginTop="30dip"
+    android:columnCount="2"
+    android:rowCount="3"
+    android:verticalSpacing="40dp"
+    android:horizontalSpacing="10dp"
+    android:useDefaultMargins="true"
+    android:layout_width="match_parent"
+    
+    android:layout_height="wrap_content">
+    <Button
+            android:id="@+id/btn_addBank"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/bank"
+            android:layout_gravity="center"
+			android:gravity="center"
+            android:text="@string/addBank"/>
+        
+           <Button
+            android:id="@+id/btn_addCategory"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+             android:layout_gravity="center"
+			android:gravity="center"
+            android:drawableTop="@drawable/folder"
+            android:text="@string/addCategory"/>
+           
+              <Button
+            android:id="@+id/btn_showExp"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"
+            android:drawableTop="@drawable/list"
+            android:background="@android:color/transparent"
+             android:layout_gravity="center"
+			android:gravity="center"
+            android:text="@string/showDetails"/>
+        
+           <Button
+            android:id="@+id/btn_addTransaction"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             android:layout_gravity="center"
+			android:gravity="center"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/dollar"
+            android:text="@string/addTransaction"/>
+           
+            <Button
+            android:id="@+id/btn_updateLimit"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             android:layout_gravity="center"
+			android:gravity="center"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/limit"
+            android:text="@string/update_limit"/>
+            
+           <Button
+            android:id="@+id/btn_exit"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+             android:layout_gravity="center"
+			android:gravity="center"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/exit"
+            android:text="@string/exit"/>
+           
+          
+    </GridLayout>
+    </LinearLayout>

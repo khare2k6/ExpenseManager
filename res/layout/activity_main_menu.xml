@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        
+        <Button
+            android:id="@+id/btn_addBank"
+            android:layout_width="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_height="wrap_content"
+            android:drawableBottom="@drawable/bank"
+            android:text="@string/addBank"/>
+        
+           <Button
+            android:id="@+id/btn_addCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:drawableBottom="@drawable/category"
+            android:text="@string/addCategory"/>
+           
+</LinearLayout>    
+
+        <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        
+        <Button
+            android:id="@+id/btn_showExp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableBottom="@drawable/list"
+            android:background="@android:color/transparent"
+            android:text="@string/showDetails"/>
+        
+           <Button
+            android:id="@+id/btn_addTransaction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:drawableBottom="@drawable/dollar"
+            android:text="@string/addTransaction"/>
+           
+</LinearLayout>   
+
+</LinearLayout>

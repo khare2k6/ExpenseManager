@@ -42,8 +42,8 @@ public class FragmentListYearly extends Fragment{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG,"onCreate");
-		if(matrixCursor == null)
-			matrixCursor = new MatrixCursor(FROM);
+		//if(matrixCursor == null)
+			//matrixCursor = new MatrixCursor(FROM);
 		expenses = new RetrieveExpenses(parentActivity);
 		
 	}
@@ -67,6 +67,7 @@ public class FragmentListYearly extends Fragment{
 		Log.d(TAG,"onPause");
 		lv_expenses.setAdapter(null);
 		adapter = null;
+		matrixCursor = null;
 		
 		
 	}
@@ -83,7 +84,7 @@ public class FragmentListYearly extends Fragment{
 	public void onResume() {
 		super.onResume();
 		Log.d(TAG,"onResume");
-		if(matrixCursor.getCount() == 0)
+		//if(matrixCursor.getCount() == 0)
 			addDataToCursor();
 		adapter = new SimpleCursorAdapter(parentActivity, R.layout.row_yearly, matrixCursor, FROM, TO,0);
 	
@@ -102,6 +103,7 @@ public class FragmentListYearly extends Fragment{
 
 	private void addDataToCursor() {
 		ArrayList<MonthlyExpense> expList = expenses.getAllMonthExpenses();
+		matrixCursor = new MatrixCursor(FROM);
 		int i =1;
 		for(MonthlyExpense exp :expList){
 			matrixCursor.addRow(new Object[]{i++,exp.getMonth().toString(),exp.getTotalExpense()});

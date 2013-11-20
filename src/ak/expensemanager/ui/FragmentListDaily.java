@@ -127,6 +127,9 @@ public class FragmentListDaily extends Fragment{
 			Log.d(TAG,"delete pressed.."+item.getItemId());
 			
 			 expenses.delete(entry_id);
+			 adapter.swapCursor(expenses.getExpenseBetweenDates(this.date.getTime(),
+					 nextDay(this.date).getTime()));
+			 adapter.notifyDataSetChanged();
 			break;
 		}
 		
@@ -138,7 +141,7 @@ public class FragmentListDaily extends Fragment{
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		menu.add(0,1,0,"delete");
+		menu.add(0,1,0,"Delete");
 	}
 
 	public Date nextDay(Date date){
