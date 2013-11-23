@@ -6,8 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import ak.expensemanager.R;
-import ak.expensemanager.category.CategoryInfoSharedPref;
-import ak.expensemanager.category.ICategory;
 import ak.expensemanager.category.ILimitUpdate;
 import ak.expensemanager.category.UpdateLimitSharedPref;
 import ak.expensemanager.db.IRetrieveExpenses;
@@ -17,7 +15,6 @@ import ak.expensemanager.debug.IDebugTag;
 import android.app.Activity;
 import android.app.Fragment;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
