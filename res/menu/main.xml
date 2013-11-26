@@ -1,17 +1,23 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto" >
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
-    
-    
-    
+        android:id="@+id/add_transaction"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_add"
+        android:title="@string/addTransaction"/>
+     <item
+        android:id="@+id/add_category"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_edit"
+        android:title="@string/addCategory"/>
     <item
-        android:id="@+id/action_category"
-        android:orderInCategory="101"
-        android:showAsAction="never"
-        android:title="@string/action_category"/>
-
+        android:id="@+id/add_bank"
+        android:showAsAction="ifRoom"
+         android:icon="@drawable/bank"
+        android:title="@string/addBank"/>
+    <item
+        android:id="@+id/update_limit"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/limit"
+        android:title="@string/update_limit"/>
 </menu>

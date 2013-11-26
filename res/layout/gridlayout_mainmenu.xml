@@ -72,7 +72,7 @@
              android:layout_gravity="center"
 			android:gravity="center"
             android:background="@android:color/transparent"
-            android:drawableTop="@drawable/dollar"
+            android:drawableTop="@drawable/ic_dollar"
             android:text="@string/addTransaction"/>
            
             <Button
