@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -28,7 +29,9 @@ public class DisplayExpenses extends Activity implements IOnMonthSelectedListene
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_expenses);
+		
 		frgManager = getFragmentManager();
 		frg_yearly = new FragmentListYearly();
 		frg_monthly = new FragmentListMonthly();
@@ -36,28 +39,28 @@ public class DisplayExpenses extends Activity implements IOnMonthSelectedListene
 	}
 	
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		getMenuInflater().inflate(R.menu.main, menu);
+//		return true;
+//	}
 
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()){
-		case R.id.action_settings:
-			Intent intent = new Intent(this,MainActivity.class);
-			startActivity(intent);
-			return true;
-			
-		case R.id.action_category:
-			Intent intent2 = new Intent(this,EditCategoryActivity.class);
-			startActivity(intent2);
-						return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		switch(item.getItemId()){
+//		case R.id.action_settings:
+//			Intent intent = new Intent(this,MainActivity.class);
+//			startActivity(intent);
+//			return true;
+//			
+//		case R.id.action_category:
+//			Intent intent2 = new Intent(this,EditCategoryActivity.class);
+//			startActivity(intent2);
+//						return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 
 
 	@Override
@@ -135,5 +138,28 @@ public class DisplayExpenses extends Activity implements IOnMonthSelectedListene
 		transaction.commit();
 	}
 	
+	// Thote Added
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.add_bank:
+			startActivity(new Intent(this, MainActivity.class));
+			break;
+		case R.id.add_category:
+			startActivity(new Intent(this, EditCategoryActivity.class));
+			break;
+		case R.id.add_transaction:
+			startActivity(new Intent(this, FloatingActivity.class));
+			break;
+		}
+		return true;
+	}
 
 }

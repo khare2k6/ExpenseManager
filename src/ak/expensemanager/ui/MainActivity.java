@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,92 +27,91 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-	final static String TAG = IDebugTag.ankitTag + MainActivity.class.getSimpleName();
+	final static String TAG = IDebugTag.ankitTag
+			+ MainActivity.class.getSimpleName();
 	Button btn_addContact = null;
 	EditText et_addContact = null;
 	View.OnClickListener listner = null;
 	IContactInfo contactInfo = null;
 	ListView lv_contatcsList = null;
-	ArrayAdapter<String>adapter = null;
-	 String delete_number;
-	
+	ArrayAdapter<String> adapter = null;
+	String delete_number;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		btn_addContact = (Button)findViewById(R.id.btn_addContacts);
-		et_addContact = (EditText)findViewById(R.id.et_addCotnact);
-		lv_contatcsList = (ListView)findViewById(R.id.lv_contacts);
+
+		btn_addContact = (Button) findViewById(R.id.btn_addContacts);
+		et_addContact = (EditText) findViewById(R.id.et_addCotnact);
+		lv_contatcsList = (ListView) findViewById(R.id.lv_contacts);
 		init();
 	}
-	
+
 	/**
-	 * Factory types.
-	 * DB might be shared pref or sql lite or anything else
+	 * Factory types. DB might be shared pref or sql lite or anything else
 	 * */
-	void init(){
+	void init() {
 		contactInfo = new ContactInfoSharedPref(this);
 	}
 
 	@Override
 	protected void onPause() {
-		
+
 		super.onPause();
-		Log.d(TAG,"onPause");
+		Log.d(TAG, "onPause");
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.d(TAG,"onResume");
-		
+		Log.d(TAG, "onResume");
+
 		listner = new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				
-				switch(v.getId()){
+
+				switch (v.getId()) {
 				case R.id.btn_addContacts:
-					Log.d(TAG,"add contact clicked");
-					if(contactInfo == null)
+					Log.d(TAG, "add contact clicked");
+					if (contactInfo == null)
 						init();
-					
-					if(et_addContact.getText().toString().isEmpty()){
-						Toast.makeText(MainActivity.this, IDebugTag.FILL_CONTACT, Toast.LENGTH_SHORT).show();
+
+					if (et_addContact.getText().toString().isEmpty()) {
+						Toast.makeText(MainActivity.this,
+								IDebugTag.FILL_CONTACT, Toast.LENGTH_SHORT)
+								.show();
 						return;
-					}else{
-						contactInfo.addContact(IDebugTag.BANK, et_addContact.getText().toString());
+					} else {
+						contactInfo.addContact(IDebugTag.BANK, et_addContact
+								.getText().toString());
 					}
 					break;
 				}
 			}
 		};
-		
+
 		btn_addContact.setOnClickListener(listner);
 		showContactList();
-		lv_contatcsList.setOnItemLongClickListener(new OnItemLongClickListener() {
+		lv_contatcsList
+				.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View view,
-					int arg2, long arg3) {
-				TextView tv = (TextView)view;
-				Toast.makeText(MainActivity.this, tv.getText(), Toast.LENGTH_SHORT).show();
-				delete_number = (String) tv.getText();
-				//categoryInfo.removeCategory(delete_category);
-			
-				return false;
-			}
-		});
+					@Override
+					public boolean onItemLongClick(AdapterView<?> arg0,
+							View view, int arg2, long arg3) {
+						TextView tv = (TextView) view;
+						Toast.makeText(MainActivity.this, tv.getText(),
+								Toast.LENGTH_SHORT).show();
+						delete_number = (String) tv.getText();
+						// categoryInfo.removeCategory(delete_category);
+
+						return false;
+					}
+				});
 		registerForContextMenu(lv_contatcsList);
-		
-		
+
 	}
-
-	
-	
-
-	
 
 	@Override
 	protected void onStop() {
@@ -121,7 +122,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		switch(item.getItemId()){
+		switch (item.getItemId()) {
 		case 1:
 			contactInfo.removeContact(delete_number);
 			break;
@@ -135,14 +136,15 @@ public class MainActivity extends Activity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		menu.add(0, 1, 0, "Delete");
 	}
-	
-	void showContactList(){
+
+	void showContactList() {
 		Map contactsMap = contactInfo.getAllContacts();
-		Object [] contactsObjArr =  contactsMap.keySet().toArray();
-		String [] contacts = Arrays.copyOf(contactsObjArr, contactsObjArr.length,String[].class);
-		adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1,contacts);
+		Object[] contactsObjArr = contactsMap.keySet().toArray();
+		String[] contacts = Arrays.copyOf(contactsObjArr,
+				contactsObjArr.length, String[].class);
+		adapter = new ArrayAdapter<String>(MainActivity.this,
+				android.R.layout.simple_list_item_1, contacts);
 		lv_contatcsList.setAdapter(adapter);
 	}
-	
 
 }

@@ -18,9 +18,9 @@ public interface IDebugTag {
 	final String MESSAGE  = "message";
 	final int LIMIT = 1050;
 	final String DEFINED_LIMIT = "limit";
-	final String YEARLY_VIEW = "Yearly View";
-	final String MONTHLY_VIEW = "Monthly View";
-	final String DAILY_VIEW = "Daily View";
+	final String YEARLY_VIEW = "Yearly Expenses";
+	final String MONTHLY_VIEW = "Monthly Expenses";
+	final String DAILY_VIEW = "Daily expenses";
 	final String DEFAULT_CATEGORY = "Fuel";
 	final String BANK = "bank";
 	

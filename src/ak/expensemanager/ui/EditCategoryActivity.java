@@ -11,6 +11,7 @@ import ak.expensemanager.category.ICategory;
 import ak.expensemanager.category.ILimitUpdate;
 import ak.expensemanager.category.UpdateLimitSharedPref;
 import ak.expensemanager.debug.IDebugTag;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,6 +55,8 @@ public class EditCategoryActivity extends Activity {
 		lv_categoryList = (ListView)findViewById(R.id.lv_category);
 		btn_updateLimit = (Button)findViewById(R.id.btn_updateLimit);
 		init();
+		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 	
 	/**
