@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 import ak.expensemanager.R;
@@ -13,6 +14,9 @@ import ak.expensemanager.db.IRetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses;
 import ak.expensemanager.debug.IDebugTag;
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,11 +27,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class FloatingActivity extends Activity {
+public class FloatingActivity extends Activity 
+	implements DatePickerDialog.OnDateSetListener {
 
 	final static String TAG = IDebugTag.ankitTag
 			+ FloatingActivity.class.getSimpleName();
@@ -39,6 +46,9 @@ public class FloatingActivity extends Activity {
 	int amt;
 	EditText et_notes = null;
 	Button btn_submit = null;
+	TextView txtDate;
+	Button btnChangeDate;
+	
 	IRetrieveExpenses expenses = null;
 	ICategory category = null;
 
@@ -46,11 +56,27 @@ public class FloatingActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG, "onCreate");
+		
 		setContentView(R.layout.activity_floating);
+		
+		txtDate = (TextView) findViewById(R.id.date);
+		setCurrentDate();
+		
+		btnChangeDate = (Button) findViewById(R.id.btn_change_date);
+		btnChangeDate.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				changeDate();
+			}
+		});
+		
 		spinner = (Spinner) findViewById(R.id.spn_category);
 		et_amount = (EditText) findViewById(R.id.et_amount);
 		et_notes = (EditText) findViewById(R.id.et_notes);
 		btn_submit = (Button) findViewById(R.id.btn_submitExp);
+		
+		
 		expenses = new RetrieveExpenses(this);
 		category = new CategoryInfoSharedPref(this);
 
@@ -62,9 +88,28 @@ public class FloatingActivity extends Activity {
 		window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,
 				WindowManager.LayoutParams.WRAP_CONTENT);
 		window.setGravity(Gravity.CENTER_HORIZONTAL);
-
 	}
 
+	private void setCurrentDate() {
+		Calendar cal = Calendar.getInstance();
+		setDate(cal.get(Calendar.YEAR), 
+				cal.get(Calendar.MONTH),
+				cal.get(Calendar.DAY_OF_MONTH),
+				cal.get(Calendar.HOUR), 
+				cal.get(Calendar.MINUTE));
+	}
+	
+	private void setDate(int year, int month, int day, int hour, int min) {
+		txtDate.setText(day + "/" + month + "/" + year + " " /* + hour + ":" + min */);
+	}
+
+	private void changeDate() {
+		DatePickerFragment dateFragment = new DatePickerFragment();
+		dateFragment.setListener(this);
+		dateFragment.show(getFragmentManager(), "datePicker");
+	}
+	
+	
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
@@ -91,7 +136,8 @@ public class FloatingActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		onNewIntent(getIntent());
+		
+		onNewIntent(getIntent()); // Ankit : This is crime!  why why why ? 
 
 		if (msg != null)
 			et_amount.setText(((Integer) getAmountFromMessage()).toString());
@@ -168,5 +214,30 @@ public class FloatingActivity extends Activity {
 		}
 		amt = number.intValue();
 		return amt;
+	}
+	
+	public static class DatePickerFragment extends DialogFragment {
+		DatePickerDialog.OnDateSetListener mListener;
+		
+		public void setListener(DatePickerDialog.OnDateSetListener listener) {
+			mListener = listener;
+		}
+		
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			// Use the current date as the default date in the picker
+			final Calendar c = Calendar.getInstance();
+			int year = c.get(Calendar.YEAR);
+			int month = c.get(Calendar.MONTH);
+			int day = c.get(Calendar.DAY_OF_MONTH);
+
+			// Create a new instance of DatePickerDialog and return it
+			return new DatePickerDialog(getActivity(), mListener, year, month, day);
+		}
+	}
+	
+	@Override
+	public void onDateSet(DatePicker view, int year, int month, int day) {
+		setDate(year, month, day, 0, 0);
 	}
 }
