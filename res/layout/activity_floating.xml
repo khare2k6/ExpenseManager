@@ -12,27 +12,21 @@
     <RelativeLayout
         android:id="@+id/date_header"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
-        <TextView 
-            android:id="@+id/txt_date" 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-             android:layout_marginLeft="10dp"
-            android:text="@string/date" />
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp" >
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
-            android:layout_toLeftOf="@+id/btn_change_date"
-            android:layout_marginRight="10dp"
+            android:layout_alignParentLeft="true"
+            android:textSize="20sp"
+            android:hint="@string/date_here"
             android:text="@string/date_format"/>
        <Button
-           android:id="@id/btn_change_date"
+           android:id="@+id/btn_change_date"
            android:layout_width="25dp"
            android:layout_height="25dp"
-           android:layout_alignParentRight="true"
-           android:layout_marginRight="10dp"
+           android:layout_toRightOf="@+id/date"
            android:background="@drawable/ic_edit" />
     </RelativeLayout>
     

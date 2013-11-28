@@ -32,5 +32,6 @@
     <string name="date">Date: </string>
     <string name="date_format">dd/mm/yyyy hh:mm</string>
     <string name="change_date_description">Date of the transaction</string>
+    <string  name="date_here">Date here</string>
 
 </resources>

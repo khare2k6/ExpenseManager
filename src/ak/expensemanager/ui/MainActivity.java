@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
 
 	final static String TAG = IDebugTag.ankitTag
 			+ MainActivity.class.getSimpleName();
+	
 	Button btn_addContact = null;
 	EditText et_addContact = null;
 	View.OnClickListener listner = null;
@@ -57,7 +58,6 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onPause() {
-
 		super.onPause();
 		Log.d(TAG, "onPause");
 	}
@@ -71,13 +71,12 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-
 				switch (v.getId()) {
 				case R.id.btn_addContacts:
 					Log.d(TAG, "add contact clicked");
 					if (contactInfo == null)
 						init();
-
+					
 					if (et_addContact.getText().toString().isEmpty()) {
 						Toast.makeText(MainActivity.this,
 								IDebugTag.FILL_CONTACT, Toast.LENGTH_SHORT)

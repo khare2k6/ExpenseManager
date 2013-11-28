@@ -32,6 +32,7 @@ import android.widget.Toast;
 public class EditCategoryActivity extends Activity {
 
 	final static String TAG = IDebugTag.ankitTag + MainActivity.class.getSimpleName();
+	
 	Button btn_addCategory = null;
 	Button btn_updateLimit = null;
 	EditText et_addCategory = null;
@@ -42,7 +43,6 @@ public class EditCategoryActivity extends Activity {
 	ArrayAdapter<String>adapter = null;
 	String delete_category = null;
 	ILimitUpdate updatelimit = null;
-	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
