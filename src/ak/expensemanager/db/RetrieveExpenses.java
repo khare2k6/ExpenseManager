@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import ak.expensemanager.debug.IDebugTag;
+import ak.expensemanager.model.Expense;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -46,12 +47,12 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 	}
 
 	@Override
-	public void addExpense(long date, int amount, String category, String notes) {
+	public void addExpense(Expense expense) {
 		ContentValues values = new ContentValues();
-		values.put(DbHelper.C_DATE, date);
-		values.put(DbHelper.C_AMOUNT, amount);
-		values.put(DbHelper.C_CATEGORY, category);
-		values.put(DbHelper.C_NOTES, notes);
+		values.put(DbHelper.C_DATE, expense.getCalendar().getTimeInMillis());
+		values.put(DbHelper.C_AMOUNT, expense.getAmount());
+		values.put(DbHelper.C_CATEGORY, expense.getCategory().getName());
+		values.put(DbHelper.C_NOTES, expense.getNote());
 
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		long ret = db.insert(DbHelper.TABLE_NAME, null, values);
@@ -102,9 +103,7 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 
 	String getDate(long date) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd,MMM");
-
 		return sdf.format(new Date(date));
-
 	}
 
 	/**

@@ -7,17 +7,17 @@
         android:title="@string/addTransaction"/>
      <item
         android:id="@+id/add_category"
-        android:showAsAction="ifRoom"
+        android:showAsAction="never"
         android:icon="@drawable/ic_edit"
         android:title="@string/addCategory"/>
     <item
         android:id="@+id/add_bank"
-        android:showAsAction="ifRoom"
+        android:showAsAction="never"
          android:icon="@drawable/bank"
         android:title="@string/addBank"/>
     <item
         android:id="@+id/update_limit"
-        android:showAsAction="ifRoom"
+        android:showAsAction="never"
         android:icon="@drawable/limit"
         android:title="@string/update_limit"/>
 </menu>

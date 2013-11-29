@@ -13,10 +13,14 @@ import ak.expensemanager.category.ICategory;
 import ak.expensemanager.db.IRetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses;
 import ak.expensemanager.debug.IDebugTag;
+import ak.expensemanager.model.Category;
+import ak.expensemanager.model.Expense;
+import ak.expensemanager.model.SmsDecipher;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,14 +35,16 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 public class FloatingActivity extends Activity 
-	implements DatePickerDialog.OnDateSetListener {
+	implements DatePickerDialog.OnDateSetListener, 
+	TimePickerDialog.OnTimeSetListener, 
+	View.OnClickListener {
 
 	final static String TAG = IDebugTag.ankitTag
 			+ FloatingActivity.class.getSimpleName();
-	String msg = null;
 	EditText et_amount = null;
 	Spinner spinner = null;
 	ArrayAdapter<String> adapter = null;
@@ -48,6 +54,8 @@ public class FloatingActivity extends Activity
 	Button btn_submit = null;
 	TextView txtDate;
 	Button btnChangeDate;
+	TextView txtTime;
+	Button btnChangeTime;
 	
 	IRetrieveExpenses expenses = null;
 	ICategory category = null;
@@ -59,23 +67,9 @@ public class FloatingActivity extends Activity
 		
 		setContentView(R.layout.activity_floating);
 		
-		txtDate = (TextView) findViewById(R.id.date);
+		setupViews(getIntent());
+		
 		setCurrentDate();
-		
-		btnChangeDate = (Button) findViewById(R.id.btn_change_date);
-		btnChangeDate.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				changeDate();
-			}
-		});
-		
-		spinner = (Spinner) findViewById(R.id.spn_category);
-		et_amount = (EditText) findViewById(R.id.et_amount);
-		et_notes = (EditText) findViewById(R.id.et_notes);
-		btn_submit = (Button) findViewById(R.id.btn_submitExp);
-		
 		
 		expenses = new RetrieveExpenses(this);
 		category = new CategoryInfoSharedPref(this);
@@ -90,17 +84,69 @@ public class FloatingActivity extends Activity
 		window.setGravity(Gravity.CENTER_HORIZONTAL);
 	}
 
-	private void setCurrentDate() {
-		Calendar cal = Calendar.getInstance();
-		setDate(cal.get(Calendar.YEAR), 
-				cal.get(Calendar.MONTH),
-				cal.get(Calendar.DAY_OF_MONTH),
-				cal.get(Calendar.HOUR), 
-				cal.get(Calendar.MINUTE));
+	@Override
+	public void onClick(View v) {
+		switch(v.getId()){
+		case R.id.btn_change_date:
+			changeDate();
+			break;
+		case R.id.btn_change_time:
+			changeTime();
+			break;
+		case R.id.btn_submitExp:
+			submit();
+			break;
+		}
 	}
 	
-	private void setDate(int year, int month, int day, int hour, int min) {
-		txtDate.setText(day + "/" + month + "/" + year + " " /* + hour + ":" + min */);
+	private void setupViews(Intent intent) {
+		txtDate = (TextView) findViewById(R.id.date);
+		txtTime = (TextView) findViewById(R.id.time);
+		
+		btnChangeDate = (Button) findViewById(R.id.btn_change_date);
+		btnChangeDate.setOnClickListener(this);
+		btnChangeTime = (Button) findViewById(R.id.btn_change_time);
+		btnChangeTime.setOnClickListener(this);
+		
+		spinner = (Spinner) findViewById(R.id.spn_category);
+		et_amount = (EditText) findViewById(R.id.et_amount);
+		et_notes = (EditText) findViewById(R.id.et_notes);
+		btn_submit = (Button) findViewById(R.id.btn_submitExp);
+		btn_submit.setOnClickListener(this);
+		
+		if (intent != null) {
+			decipherAmount(intent.getStringExtra(IDebugTag.MESSAGE));
+		}
+		
+	}
+	
+	private void decipherAmount(String sms) {
+		// Ankit : This logic should be moved out of this activity
+		int amount = new SmsDecipher(sms).getAmount();
+		if (amount > 0) {
+			et_amount.setText("" + amount);
+		}
+	}
+	
+	private void setCurrentDate() {
+		Calendar cal = Calendar.getInstance();
+		
+		setDate(cal.get(Calendar.YEAR), 
+				cal.get(Calendar.MONTH),
+				cal.get(Calendar.DAY_OF_MONTH));
+		
+		setTime(cal.get(Calendar.HOUR), 
+				cal.get(Calendar.MINUTE));
+		
+		txtDate.setTag(cal);
+	}
+	
+	private void setDate(int year, int month, int day) {
+		txtDate.setText(day + "/" + month + "/" + year);
+	}
+	
+	private void setTime(int hour, int mins) {
+		txtTime.setText(hour + ":" +  mins);
 	}
 
 	private void changeDate() {
@@ -109,13 +155,38 @@ public class FloatingActivity extends Activity
 		dateFragment.show(getFragmentManager(), "datePicker");
 	}
 	
+	private void changeTime() {
+		TimePickerFragment timeFragment = new TimePickerFragment();
+		timeFragment.setListener(this);
+		timeFragment.show(getFragmentManager(), "TimePicker");
+	}
+	
+	private void submit() {
+		String strAmount = et_amount.getText().toString();
+		String strCategory = spinner.getSelectedItem().toString();
+		String note = et_notes.getText().toString();
+		
+		Log.d(TAG, "click: " + category + " and " + note);
+		if (strAmount.isEmpty()) {
+			Toast.makeText(FloatingActivity.this,
+					"Please Enter Amount spent", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		
+		Calendar cal = (Calendar) txtDate.getTag();
+		Category category = new Category(strCategory, -1);
+		int amount = Integer.parseInt(strAmount);
+		
+		expenses.addExpense(new Expense(amount, category, note, cal));
+		
+		finish();
+	}
 	
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		Log.d(TAG, "onNewintent");
-		msg = intent.getStringExtra(IDebugTag.MESSAGE);
-		Log.d(TAG, "Msg rx:" + msg);
+		decipherAmount(intent.getStringExtra(IDebugTag.MESSAGE));
 	}
 
 	@Override
@@ -136,11 +207,8 @@ public class FloatingActivity extends Activity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		onNewIntent(getIntent()); // Ankit : This is crime!  why why why ? 
 
-		if (msg != null)
-			et_amount.setText(((Integer) getAmountFromMessage()).toString());
+		
 
 		ArrayList<String> list = getCategoryList();
 		adapter = new ArrayAdapter<String>(this,
@@ -152,25 +220,6 @@ public class FloatingActivity extends Activity
 			category.addCategory(IDebugTag.DEFAULT_CATEGORY);
 			finish();
 		}
-
-		btn_submit.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Log.d(TAG, "click: " + spinner.getSelectedItem().toString()
-						+ " and " + et_notes.getText().toString());
-				if (et_amount.getText().toString().isEmpty()) {
-					Toast.makeText(FloatingActivity.this,
-							"Please Enter Amount spent", Toast.LENGTH_SHORT)
-							.show();
-					return;
-				}
-				expenses.addExpense(System.currentTimeMillis(),
-						getAmountFromEditText(), spinner.getSelectedItem()
-								.toString(), et_notes.getText().toString());
-				finish();
-			}
-		});
 	}
 
 	private ArrayList<String> getCategoryList() {
@@ -194,27 +243,6 @@ public class FloatingActivity extends Activity
 		}
 	}
 
-	int getAmountFromMessage() {
-		int startIndex = msg.indexOf("INR");
-		int endIndex = msg.indexOf(".");
-		int credited = msg.indexOf("credited");
-		if (credited != -1 || startIndex == -1 || endIndex == -1) {
-			Log.d(TAG, "credited msg..No action OR no debited msg");
-			finish();
-			return 0;
-		}
-		String amount = msg.substring(startIndex + 3, endIndex);
-		Log.d(TAG, "amount in String =" + amount);
-		Number number = null;
-		DecimalFormat format = new DecimalFormat("##,##,###");
-		try {
-			number = format.parse(amount);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		amt = number.intValue();
-		return amt;
-	}
 	
 	public static class DatePickerFragment extends DialogFragment {
 		DatePickerDialog.OnDateSetListener mListener;
@@ -238,6 +266,49 @@ public class FloatingActivity extends Activity
 	
 	@Override
 	public void onDateSet(DatePicker view, int year, int month, int day) {
-		setDate(year, month, day, 0, 0);
+		Calendar cal = (Calendar) txtDate.getTag();
+		if (cal == null) {
+			cal = Calendar.getInstance();
+			txtDate.setTag(cal);
+		}
+		cal.set(year, month, day);
+		
+		setDate(year, month, day);
+	}
+
+	public static class TimePickerFragment extends DialogFragment {
+		TimePickerDialog.OnTimeSetListener mListener;
+		
+		public void setListener(TimePickerDialog.OnTimeSetListener listener) {
+			mListener = listener;
+		}
+		
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			// Use the current date as the default date in the picker
+			final Calendar c = Calendar.getInstance();
+			int hour = c.get(Calendar.HOUR_OF_DAY);
+			int mins = c.get(Calendar.MINUTE);
+
+			// Create a new instance of DatePickerDialog and return it
+			return new TimePickerDialog(getActivity(), mListener, hour, mins, false);
+		}
+	}
+
+	@Override
+	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+		Calendar cal = (Calendar) txtDate.getTag();
+		if (cal == null) {
+			cal = Calendar.getInstance();
+			txtDate.setTag(cal);
+		}
+		
+		cal.set(cal.get(Calendar.YEAR), 
+				cal.get(Calendar.MONTH),
+				cal.get(Calendar.DAY_OF_MONTH),
+				hourOfDay,
+				minute);
+		
+		setTime(hourOfDay, minute);
 	}
 }

@@ -2,6 +2,7 @@ package ak.expensemanager.db;
 
 import java.util.ArrayList;
 
+import ak.expensemanager.model.Expense;
 import android.database.Cursor;
 
 
@@ -22,7 +23,7 @@ public interface IRetrieveExpenses {
 	/**
 	 * Add expense to db
 	 * */
-	public void addExpense(long date,int amount,String category,String notes);
+	public void addExpense(Expense expense);
 	
 	/**
 	 * returns cursor to Db

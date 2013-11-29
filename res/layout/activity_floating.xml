@@ -28,6 +28,19 @@
            android:layout_height="25dp"
            android:layout_toRightOf="@+id/date"
            android:background="@drawable/ic_edit" />
+       <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:layout_toLeftOf="@+id/btn_change_time"
+            android:textSize="20sp"
+            android:text="@string/time_format"/>
+       <Button
+           android:id="@id/btn_change_time"
+           android:layout_width="25dp"
+           android:layout_height="25dp"
+           android:layout_alignParentRight="true"
+           android:background="@drawable/ic_edit" />
     </RelativeLayout>
     
     <LinearLayout

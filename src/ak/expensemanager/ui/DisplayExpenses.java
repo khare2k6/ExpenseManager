@@ -107,14 +107,14 @@ public class DisplayExpenses extends Activity implements IOnMonthSelectedListene
 	/**
 	 * Test function
 	 * */
-	void pushData(){
-		IRetrieveExpenses exp = new RetrieveExpenses(this);
-		int cout = 1000;
-		for(int i =0;i<10;i++){
-			cout = cout+10;
-			exp.addExpense(System.currentTimeMillis(), cout,"Fuel","Blha hjafh haf a");
-		}
-	}
+//	void pushData(){
+//		IRetrieveExpenses exp = new RetrieveExpenses(this);
+//		int cout = 1000;
+//		for(int i =0;i<10;i++){
+//			cout = cout+10;
+//			exp.addExpense(System.currentTimeMillis(), cout,"Fuel","Blha hjafh haf a");
+//		}
+//	}
 
 	@Override
 	public void OnMonthSelected(String month,int position) {

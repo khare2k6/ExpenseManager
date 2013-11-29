@@ -30,7 +30,8 @@
     <string name="hint_amount">Amount</string>
     <string name="edit_category_activity_title">Categories</string>
     <string name="date">Date: </string>
-    <string name="date_format">dd/mm/yyyy hh:mm</string>
+    <string name="date_format">dd/mm/yyyy</string>
+    <string name="time_format">hh:mm</string>
     <string name="change_date_description">Date of the transaction</string>
     <string  name="date_here">Date here</string>
 
