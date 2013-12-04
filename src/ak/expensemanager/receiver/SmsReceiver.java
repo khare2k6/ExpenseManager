@@ -3,6 +3,7 @@ package ak.expensemanager.receiver;
 import ak.expensemanager.contacts.ContactInfoSharedPref;
 import ak.expensemanager.contacts.IContactInfo;
 import ak.expensemanager.debug.IDebugTag;
+import ak.expensemanager.model.RetrieveTargetKeywords;
 import ak.expensemanager.ui.FloatingActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,7 +36,9 @@ public class SmsReceiver extends BroadcastReceiver {
 					Intent intentAct = new Intent(context,FloatingActivity.class);
 					intentAct.putExtra(IDebugTag.MESSAGE, msg);
 					intentAct.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					context.startActivity(intentAct);
+					
+					if(RetrieveTargetKeywords.getInstance(context).isExpense(msg.toLowerCase()))
+						context.startActivity(intentAct);
 				}		
 			}
 		}

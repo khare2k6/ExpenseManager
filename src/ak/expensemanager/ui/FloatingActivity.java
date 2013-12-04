@@ -122,7 +122,7 @@ public class FloatingActivity extends Activity
 	
 	private void decipherAmount(String sms) {
 		// Ankit : This logic should be moved out of this activity
-		int amount = new SmsDecipher(sms).getAmount();
+		int amount = new SmsDecipher(sms,this).getAmount();
 		if (amount > 0) {
 			et_amount.setText("" + amount);
 		}
@@ -214,6 +214,7 @@ public class FloatingActivity extends Activity
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, list);
 		spinner.setAdapter(adapter);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		if (spinner.getCount() == 0) {
 			Toast.makeText(this, "Adding Default Category!", Toast.LENGTH_LONG)
 					.show();

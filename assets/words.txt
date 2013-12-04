@@ -1,0 +1,4 @@
+debited
+purchase
+withdraw
+payment
