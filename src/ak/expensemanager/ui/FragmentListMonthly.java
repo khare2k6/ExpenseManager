@@ -1,6 +1,8 @@
 package ak.expensemanager.ui;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 import ak.expensemanager.R;
 import ak.expensemanager.db.IRetrieveExpenses;
@@ -57,14 +59,24 @@ public class FragmentListMonthly extends Fragment{
 			Bundle savedInstanceState) {
 		//View v = inflater.inflate(R.layout.fragment_listexpenses, container);
 		View v = inflater.inflate(R.layout.fragment_listexpenses, null);
+		View header_month = inflater.inflate(R.layout.header_monthly, null);
+		
 		tv_title = (TextView)v.findViewById(R.id.tv_title);
-		tv_title.setText(IDebugTag.MONTHLY_VIEW);
+		tv_title.setText(getMonthName());
 		
 		lv_expenses = (ListView)v.findViewById(R.id.lv_listexpenses);
+		lv_expenses.addHeaderView(header_month);
 		return v;
 		
 	}
 
+	/**Returns the name of the month selected*/
+	String getMonthName(){
+		Calendar cal = Calendar.getInstance();
+		 cal.set(Calendar.MONTH, month);
+		return cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
+	
+	}
 	@Override
 	public void onPause() {
 		super.onPause();

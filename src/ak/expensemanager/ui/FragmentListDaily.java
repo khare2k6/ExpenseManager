@@ -8,16 +8,14 @@ import java.util.Date;
 import ak.expensemanager.R;
 import ak.expensemanager.category.ILimitUpdate;
 import ak.expensemanager.category.UpdateLimitSharedPref;
+import ak.expensemanager.db.CustomAdapter;
 import ak.expensemanager.db.IRetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses.DbHelper;
 import ak.expensemanager.debug.IDebugTag;
 import android.app.Activity;
 import android.app.Fragment;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -36,17 +34,15 @@ public class FragmentListDaily extends Fragment {
 			+ FragmentListDaily.class.getSimpleName();
 	ListView lv_yearlyExp = null;
 	TextView tv_title = null;
-	SimpleCursorAdapter adapter = null;
-	final String[] FROM = { DbHelper.C_DATE, DbHelper.C_AMOUNT,
-			DbHelper.C_CATEGORY, DbHelper.C_NOTES };
-	final int[] TO = { R.id.tv_row_monthDate, R.id.tv_row_amount,
-			R.id.tv_row_category, R.id.tv_row_notes };
+	CustomAdapter adapter = null;
+	final String[] FROM = {DbHelper.C_CATEGORY, DbHelper.C_NOTES, DbHelper.C_AMOUNT };
+	final int[] TO = {R.id.tv_row_category, R.id.tv_row_notes ,R.id.tv_row_amount,
+			};
 	Activity activity = null;
 	IRetrieveExpenses expenses = null;
 	long entry_id = 0;
-	// int date ;
-	// int month ;
 	Date date;
+	String selectedDate;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -74,10 +70,13 @@ public class FragmentListDaily extends Fragment {
 
 		// View v= inflater.inflate(R.layout.fragment_listexpenses, container);
 		View v = inflater.inflate(R.layout.fragment_listexpenses, null);
+		View header = inflater.inflate(R.layout.header_daily, null);
 		lv_yearlyExp = (ListView) v.findViewById(R.id.lv_listexpenses);
+		lv_yearlyExp.addHeaderView(header);
 		tv_title = (TextView) v.findViewById(R.id.tv_title);
-		tv_title.setText(IDebugTag.DAILY_VIEW);
-
+		tv_title.setText(selectedDate);
+	
+		
 		return v;
 
 	}
@@ -85,6 +84,7 @@ public class FragmentListDaily extends Fragment {
 	public void setDate(String sdate) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd,MMM");
 		Calendar cal = Calendar.getInstance();
+		selectedDate = sdate;
 		Log.d(TAG, "setdate :" + sdate);
 		try {
 			this.date = sdf.parse(sdate);
@@ -159,10 +159,10 @@ public class FragmentListDaily extends Fragment {
 		ILimitUpdate limitUpdate = new UpdateLimitSharedPref(this.activity);
 		final int limit = limitUpdate.getLimit();
 		Log.d(TAG, "onResume");
-		adapter = new SimpleCursorAdapter(activity, R.layout.row_monthly,
-				expenses.getExpenseBetweenDates(this.date.getTime(),
-						nextDay(this.date).getTime()), FROM, TO, 0);
-		adapter.setViewBinder(new ViewBinder() {
+		adapter = new CustomAdapter(activity, R.layout.row_daily, expenses.getExpenseBetweenDates(this.date.getTime(),
+				nextDay(this.date).getTime()), FROM, TO, 0);
+		
+	/*	adapter.setViewBinder(new ViewBinder() {
 
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int arg2) {
@@ -194,7 +194,7 @@ public class FragmentListDaily extends Fragment {
 				}
 				return true;
 			}
-		});
+		});*/
 		lv_yearlyExp.setAdapter(adapter);
 		lv_yearlyExp.setOnItemLongClickListener(new OnItemLongClickListener() {
 

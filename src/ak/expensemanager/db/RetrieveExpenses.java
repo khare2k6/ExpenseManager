@@ -85,6 +85,10 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 				if (month.equalsIgnoreCase(thisRecordsMonth)) {
 					int thisRecordExpense = cursor.getInt(cursor
 							.getColumnIndex(DbHelper.C_AMOUNT));
+					/**if its ATM withdrawal then ignore*/
+					String thisRecordCategory = cursor.getString(cursor.getColumnIndex(DbHelper.C_CATEGORY)); 
+					if(thisRecordCategory.equalsIgnoreCase(IDebugTag.ATM_TRANS))
+						continue;
 					totalExp = totalExp + thisRecordExpense;
 				}
 

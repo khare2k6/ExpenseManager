@@ -218,7 +218,9 @@ public class FloatingActivity extends Activity
 		if (spinner.getCount() == 0) {
 			Toast.makeText(this, "Adding Default Category!", Toast.LENGTH_LONG)
 					.show();
-			category.addCategory(IDebugTag.DEFAULT_CATEGORY);
+			for(int i =0;i<IDebugTag.DEFAULT_BANKS.length;i++){
+				category.addCategory(IDebugTag.DEFAULT_CATEGORY[i]);
+			}
 			finish();
 		}
 	}

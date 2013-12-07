@@ -21,8 +21,10 @@ public interface IDebugTag {
 	final String YEARLY_VIEW = "Yearly Expenses";
 	final String MONTHLY_VIEW = "Monthly Expenses";
 	final String DAILY_VIEW = "Daily expenses";
-	final String DEFAULT_CATEGORY = "Fuel";
+	final String ATM_TRANS = "ATM Withdrawl";
+	final String DEFAULT_CATEGORY []= {"Fuel",ATM_TRANS};
 	final String BANK = "bank";
+	
 	
 	final String [] DEFAULT_BANKS = {"ICICI","HDFC","AXIS","SBI","IDBI"};
 	

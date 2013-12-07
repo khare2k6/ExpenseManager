@@ -85,6 +85,7 @@ public class MainActivity extends Activity {
 					} else {
 						contactInfo.addContact(IDebugTag.BANK, et_addContact
 								.getText().toString());
+						showContactList();
 					}
 					break;
 				}
@@ -124,6 +125,7 @@ public class MainActivity extends Activity {
 		switch (item.getItemId()) {
 		case 1:
 			contactInfo.removeContact(delete_number);
+			showContactList();
 			break;
 		}
 		return super.onContextItemSelected(item);
@@ -144,6 +146,8 @@ public class MainActivity extends Activity {
 		adapter = new ArrayAdapter<String>(MainActivity.this,
 				android.R.layout.simple_list_item_1, contacts);
 		lv_contatcsList.setAdapter(adapter);
+		adapter.notifyDataSetChanged();
+	
 	}
 
 }

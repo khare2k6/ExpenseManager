@@ -3,7 +3,7 @@
     <item
         android:id="@+id/add_transaction"
         android:showAsAction="ifRoom"
-        android:icon="@drawable/ic_add"
+        android:icon="@android:drawable/ic_menu_add"
         android:title="@string/addTransaction"/>
      <item
         android:id="@+id/add_category"

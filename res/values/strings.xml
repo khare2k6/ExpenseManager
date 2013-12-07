@@ -33,6 +33,10 @@
     <string name="date_format">dd/mm/yyyy</string>
     <string name="time_format">hh:mm</string>
     <string name="change_date_description">Date of the transaction</string>
-    <string  name="date_here">Date here</string>
-
+    <string name="date_here">Date here</string>
+    <string name="header_category">Category</string>
+    <string name="header_amount">Amount</string>
+    <string name="header_date">Date</string>
+    
+    <string name="header_notes">Notes</string>
 </resources>

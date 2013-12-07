@@ -96,6 +96,7 @@ public class EditCategoryActivity extends Activity {
 						return;
 					}else{
 						categoryInfo.addCategory(et_addCategory.getText().toString());
+						showCategoryList();
 					}
 					break;
 				case R.id.btn_updateLimit:
@@ -146,6 +147,7 @@ public class EditCategoryActivity extends Activity {
 		switch(item.getItemId()){
 		case 1:
 			categoryInfo.removeCategory(delete_category);
+			showCategoryList();
 			break;
 		}
 		return super.onContextItemSelected(item);
@@ -172,6 +174,7 @@ public class EditCategoryActivity extends Activity {
 		String [] contacts = Arrays.copyOf(contactsObjArr, contactsObjArr.length,String[].class);
 		adapter = new ArrayAdapter<String>(EditCategoryActivity.this, android.R.layout.simple_list_item_1,contacts);
 		lv_categoryList.setAdapter(adapter);
+		adapter.notifyDataSetChanged();
 	}
 	
 
