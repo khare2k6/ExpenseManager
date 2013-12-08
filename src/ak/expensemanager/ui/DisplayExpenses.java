@@ -45,6 +45,14 @@ IOnCategorySelectedListener,TabListener{
 		frg_category = new FragmentCategory();
 		
 		  actionBar = getActionBar();
+		  actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+			 actionBar.setDisplayShowTitleEnabled(false);
+			 Tab tab = actionBar.newTab().setText(IDebugTag.YEARLY_VIEW_TITLE).setTabListener(this);
+			 actionBar.addTab(tab);
+			 
+			 tab = actionBar.newTab().setText(IDebugTag.CATEGORY_VIEW_TITLE).setTabListener(this);
+			 actionBar.addTab(tab);
+			
 		   
 	}
 	
@@ -76,13 +84,6 @@ IOnCategorySelectedListener,TabListener{
 	@Override
 	protected void onResume() {
 		super.onResume();
-		 actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		 actionBar.setDisplayShowTitleEnabled(false);
-		 Tab tab = actionBar.newTab().setText("Yearly View").setTabListener(this);
-		 actionBar.addTab(tab);
-		 
-		 tab = actionBar.newTab().setText("Category View").setTabListener(this);
-		 actionBar.addTab(tab);
 		 
 		FragmentTransaction transaction = frgManager.beginTransaction();
 		transaction.replace(R.id.fragment_container, frg_yearly);
@@ -200,7 +201,7 @@ IOnCategorySelectedListener,TabListener{
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		if(tab.getText().toString().equals("Yearly View")){
+		if(tab.getText().toString().equals(IDebugTag.YEARLY_VIEW_TITLE)){
 			ft.replace(R.id.fragment_container, frg_yearly);
 		}	else{
 			ft.replace(R.id.fragment_container, frg_all_categories);
