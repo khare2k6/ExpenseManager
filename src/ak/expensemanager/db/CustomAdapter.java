@@ -1,5 +1,8 @@
 package ak.expensemanager.db;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import ak.expensemanager.R;
 import ak.expensemanager.category.ILimitUpdate;
 import ak.expensemanager.category.UpdateLimitSharedPref;
@@ -53,6 +56,8 @@ public void bindView(View view, Context context, Cursor cursor) {
 	String notes = cursor.getString(cursor.getColumnIndex(DbHelper.C_NOTES));
 	TextView tv_notes = (TextView) view.findViewById(R.id.tv_row_notes);
 	tv_notes.setText(notes);
+	
+	
 
 	super.bindView(view, context, cursor);
 }

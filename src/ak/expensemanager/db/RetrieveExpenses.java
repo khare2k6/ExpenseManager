@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Set;
 
 import ak.expensemanager.debug.IDebugTag;
+import ak.expensemanager.model.Category;
 import ak.expensemanager.model.Expense;
 import android.content.ContentValues;
 import android.content.Context;
@@ -16,6 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.text.method.MovementMethod;
 import android.util.Log;
 
 public class RetrieveExpenses implements IRetrieveExpenses {
@@ -66,6 +69,59 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 		return db
 				.query(DbHelper.TABLE_NAME, null, null, null, null, null, null);
 	}
+	
+	public int getTotalExpenseForCategory(Category category){
+		Cursor cursor = getEntriesForCategory(category);
+		if(cursor.getCount() > 0){
+			cursor.moveToFirst();
+			int totalExp =0;
+			do{
+				int expForThisEntry = cursor.getInt(cursor.getColumnIndex(DbHelper.C_AMOUNT));
+				totalExp += expForThisEntry; 
+			}while(cursor.moveToNext());
+			Log.d(TAG,"Total exp for category :"+category.getName()+ "exp = "+totalExp);
+			return totalExp;
+		}else{
+			Log.d(TAG,"No records found  for category :"+category.getName());
+			return 0;
+		}
+			
+	}
+	@Override
+	public Cursor getExpenseForCategories(Set<String> catSet) {
+		MatrixCursor matCategoryCursor = new MatrixCursor(new String[] {DbHelper.C_ID,DbHelper.C_CATEGORY,DbHelper.C_AMOUNT});
+		int entry =1;
+		for(String cat : catSet){
+			Cursor catCursor = getEntriesForCategory(new Category(cat, 0));
+			int totalExp = 0;
+			if(catCursor.getCount() >0){
+			catCursor.moveToFirst();
+			
+			do{
+				int thisRowExp = catCursor.getInt(catCursor.getColumnIndex(DbHelper.C_AMOUNT));
+				totalExp += thisRowExp;
+				
+			}while(catCursor.moveToNext());
+			}else{
+				Log.d(TAG,"No record for cat"+cat);
+			}
+			matCategoryCursor.addRow(new Object[]{entry++,cat,totalExp});
+			
+		}
+		return matCategoryCursor;
+	}
+
+	public Cursor getEntriesForCategory(Category category) {
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		Log.d(TAG,"querying for "+category.getName());
+	
+		return db.query(DbHelper.TABLE_NAME,/*Table Name*/
+				new String[] {DbHelper.C_ID,DbHelper.C_CATEGORY,DbHelper.C_AMOUNT},/*Coloum name*/
+				DbHelper.C_CATEGORY+" = ? ",/*selection*/
+				new String[]{category.getName()},/*selection arg*/
+				null, null, null);
+		
+	}
 
 	@Override
 	public int getMonthlyExpense(String month) {
@@ -86,9 +142,10 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 					int thisRecordExpense = cursor.getInt(cursor
 							.getColumnIndex(DbHelper.C_AMOUNT));
 					/**if its ATM withdrawal then ignore*/
-					String thisRecordCategory = cursor.getString(cursor.getColumnIndex(DbHelper.C_CATEGORY)); 
-					if(thisRecordCategory.equalsIgnoreCase(IDebugTag.ATM_TRANS))
+					if(isAtmTransaction(cursor)){
+						Log.d(TAG,"SKipping entry for amt:"+thisRecordExpense);
 						continue;
+					}
 					totalExp = totalExp + thisRecordExpense;
 				}
 
@@ -154,6 +211,16 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 		}
 
 	}
+	
+	/**
+	 * Returns if category of current transaction is ATM 
+	 * withdrawl
+	 * */
+	boolean isAtmTransaction(Cursor cursor){
+		String category = cursor.getString(cursor.getColumnIndex(DbHelper.C_CATEGORY));
+		return category.equalsIgnoreCase(IDebugTag.ATM_TRANS);
+	}
+
 
 	public Cursor getMonthlyExp(int month) {
 		// SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -174,6 +241,11 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 			previousDateLong = startDateLong;
 			// sum up expense of single days
 			do {
+				if(isAtmTransaction(cursor)){
+					Log.d(TAG,"skipping daily entry for:"+cursor.getInt(cursor
+						.getColumnIndex(DbHelper.C_AMOUNT)));
+					continue;
+				}
 				startDateLong = cursor.getLong(cursor
 						.getColumnIndex(DbHelper.C_DATE));
 				startDateInt = Integer.parseInt((new SimpleDateFormat("dd"))
@@ -181,6 +253,7 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 				Log.d(TAG, "sDate =" + startDateInt);
 
 				if (startDateInt == previousDate) {
+					
 					dailExp += cursor.getInt(cursor
 							.getColumnIndex(DbHelper.C_AMOUNT));
 				} else {
@@ -191,6 +264,7 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 					previousDateLong = startDateLong;
 
 					Log.d(TAG, "entry added  =" + dailExp);
+				
 					dailExp = cursor.getInt(cursor
 							.getColumnIndex(DbHelper.C_AMOUNT));
 				}
@@ -250,5 +324,20 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 		String whereClause = DbHelper.C_ID + " = " + id;
 		db.delete(DbHelper.TABLE_NAME, whereClause, null);
 	}
+
+	@Override
+	public Cursor getExpenseForCategory(Category category) {
+		SQLiteDatabase db = dbHelper.getReadableDatabase();
+		return db.query(DbHelper.TABLE_NAME,
+				new String[]{DbHelper.C_ID, DbHelper.C_DATE,DbHelper.C_NOTES,DbHelper.C_AMOUNT},
+				DbHelper.C_CATEGORY +" = ?",
+				new String[]{category.getName()},
+				null, null, null);
+	
+	}
+
+	
+
+	
 
 }

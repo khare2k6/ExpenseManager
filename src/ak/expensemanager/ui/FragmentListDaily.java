@@ -70,7 +70,7 @@ public class FragmentListDaily extends Fragment {
 
 		// View v= inflater.inflate(R.layout.fragment_listexpenses, container);
 		View v = inflater.inflate(R.layout.fragment_listexpenses, null);
-		View header = inflater.inflate(R.layout.header_daily, null);
+		View header = inflater.inflate(R.layout.header_date_notes_amt, null);
 		lv_yearlyExp = (ListView) v.findViewById(R.id.lv_listexpenses);
 		lv_yearlyExp.addHeaderView(header);
 		tv_title = (TextView) v.findViewById(R.id.tv_title);

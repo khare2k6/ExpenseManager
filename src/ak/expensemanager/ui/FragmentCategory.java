@@ -1,68 +1,69 @@
+
 package ak.expensemanager.ui;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import ak.expensemanager.R;
+import ak.expensemanager.category.CategoryInfoSharedPref;
+import ak.expensemanager.category.ICategory;
 import ak.expensemanager.db.IRetrieveExpenses;
-import ak.expensemanager.db.MonthlyExpense;
 import ak.expensemanager.db.RetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses.DbHelper;
 import ak.expensemanager.debug.IDebugTag;
+import ak.expensemanager.model.Category;
 import android.app.Activity;
 import android.app.Fragment;
-import android.database.MatrixCursor;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FragmentListMonthly extends Fragment{
+public class FragmentCategory extends Fragment{
 	
-    int month;
-	final String TAG = IDebugTag.ankitTag + FragmentListMonthly.class.getSimpleName();
-	MatrixCursor matrixCursor ;
+   
+    Category category;
+	final String TAG = IDebugTag.ankitTag + FragmentCategory.class.getSimpleName();
+	ICategory categoryManager;
 	IRetrieveExpenses expenses;
-	final String [] FROM = {BaseColumns._ID,DbHelper.C_DATE,DbHelper.C_AMOUNT};
-	final int [] TO ={R.id.tv_row_id,R.id.tv_row_monthDate,R.id.tv_row_amount};
+	final String [] FROM = {DbHelper.C_DATE,DbHelper.C_NOTES,DbHelper.C_AMOUNT};
+	final int [] TO ={R.id.tv_row_monthDate,R.id.tv_row_notes,R.id.tv_row_amount};
 	Activity parentActivity;
 	TextView tv_title;
 	ListView lv_expenses;
 	SimpleCursorAdapter adapter;
-	IOnDateSelectedListener mActivityListner = null;
+	//IOnCategorySelectedListener mActivityListner = null;
 
 	
-	public void setMonth(int month){
-		this.month = month;
-	}
+	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG,"onCreate");
-		if(matrixCursor == null)
-			matrixCursor = new MatrixCursor(FROM);
 		expenses = new RetrieveExpenses(parentActivity);
+		categoryManager = new CategoryInfoSharedPref(parentActivity);
 		
 	}
 
+	
+	public void setCategory(Category category){
+		this.category = category;
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		//View v = inflater.inflate(R.layout.fragment_listexpenses, container);
 		View v = inflater.inflate(R.layout.fragment_listexpenses, null);
-		View header_month = inflater.inflate(R.layout.header_date_amt, null);
+		View header_month = inflater.inflate(R.layout.header_date_notes_amt, null);
 		
 		tv_title = (TextView)v.findViewById(R.id.tv_title);
-		tv_title.setText(getMonthName());
+		tv_title.setText(category.getName());
 		
 		lv_expenses = (ListView)v.findViewById(R.id.lv_listexpenses);
 		lv_expenses.addHeaderView(header_month);
@@ -70,13 +71,6 @@ public class FragmentListMonthly extends Fragment{
 		
 	}
 
-	/**Returns the name of the month selected*/
-	String getMonthName(){
-		Calendar cal = Calendar.getInstance();
-		 cal.set(Calendar.MONTH, month);
-		return cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
-	
-	}
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -99,39 +93,46 @@ public class FragmentListMonthly extends Fragment{
 	public void onResume() {
 		super.onResume();
 		Log.d(TAG,"onResume");
-		if(matrixCursor.getCount() == 0)
-			//addDataToCursor();
-		adapter = new SimpleCursorAdapter(parentActivity, R.layout.row_yearly, expenses.getMonthlyExp(month)
+		adapter = new SimpleCursorAdapter(parentActivity, R.layout.row_date_notes_amt, 
+				expenses.getExpenseForCategory(category)
 				, FROM, TO,0);
 	
 		lv_expenses.setAdapter(adapter);
-		lv_expenses.setOnItemClickListener(new OnItemClickListener() {
+		adapter.setViewBinder(new ViewBinder() {
+			
+			@Override
+			public boolean setViewValue(View view, Cursor cursor, int arg2) {
+				//set Date
+				if(view.getId() == R.id.tv_row_monthDate){
+					Long date = cursor.getLong(cursor.getColumnIndex(DbHelper.C_DATE));
+					SimpleDateFormat sdf = new SimpleDateFormat("dd MMM");
+					String sDate = sdf.format(new Date(date));
+					TextView tv_date = (TextView)view;
+					tv_date.setText(sDate);
+					return true;
+				}
+				return false;
+			}
+		});
+		/*lv_expenses.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
-				TextView tv = (TextView)view.findViewById(R.id.tv_row_monthDate);
-				if(tv == null) return ;
-				String strtv = tv.getText().toString();
-				mActivityListner.OnDateSelected(strtv);
+				String tv = ((TextView)view.findViewById(R.id.tv_row_category)).getText().toString();
+				mActivityListner.OnCategorySelected(tv);
 			}
-		});
+		});*/
 	}
 
-	private void addDataToCursor() {
-		ArrayList<MonthlyExpense> expList = expenses.getAllMonthExpenses();
-		int i =1;
-		for(MonthlyExpense exp :expList){
-			matrixCursor.addRow(new Object[]{i++,exp.getMonth().toString(),exp.getTotalExpense()});
-		}
-	}
 
+	
 	@Override
 	public void onAttach(Activity activity) {
 			super.onAttach(activity);
 			Log.d(TAG,"onAttach");
 			this.parentActivity = activity; 
-			mActivityListner = (IOnDateSelectedListener) this.parentActivity;
+			//mActivityListner = (IOnCategorySelectedListener) this.parentActivity;
 	}
 
 	@Override
@@ -142,10 +143,7 @@ public class FragmentListMonthly extends Fragment{
 	}
 
 	
-	public interface IOnDateSelectedListener {
-		public void OnDateSelected(String date);
 
-	}
 	
 	
 	

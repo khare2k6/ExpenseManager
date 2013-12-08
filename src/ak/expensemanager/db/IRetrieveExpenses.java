@@ -1,7 +1,9 @@
 package ak.expensemanager.db;
 
 import java.util.ArrayList;
+import java.util.Set;
 
+import ak.expensemanager.model.Category;
 import ak.expensemanager.model.Expense;
 import android.database.Cursor;
 
@@ -47,5 +49,16 @@ public interface IRetrieveExpenses {
 	 * To delete a particular entry
 	 * */
 	public void delete(long id);
+	
+	/**
+	 * get total expense for 
+	 * a category
+	 * */
+	public Cursor getExpenseForCategories(Set<String> catSet);
+	
+	/**
+	 * Get expense for specified category
+	 * */
+	public Cursor getExpenseForCategory(Category category);
 	
 }

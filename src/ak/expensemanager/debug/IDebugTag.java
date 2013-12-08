@@ -24,6 +24,7 @@ public interface IDebugTag {
 	final String ATM_TRANS = "ATM Withdrawl";
 	final String DEFAULT_CATEGORY []= {"Fuel",ATM_TRANS};
 	final String BANK = "bank";
+	final String CATEGORY_VIEW_TITLE = "Category View";
 	
 	
 	final String [] DEFAULT_BANKS = {"ICICI","HDFC","AXIS","SBI","IDBI"};
