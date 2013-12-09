@@ -105,7 +105,7 @@ public class FragmentCategory extends Fragment{
 				//set Date
 				if(view.getId() == R.id.tv_row_monthDate){
 					Long date = cursor.getLong(cursor.getColumnIndex(DbHelper.C_DATE));
-					SimpleDateFormat sdf = new SimpleDateFormat("dd MMM");
+					SimpleDateFormat sdf = new SimpleDateFormat(IDebugTag.DATE_FORMAT_DD_MMM_WEEKDAY);
 					String sDate = sdf.format(new Date(date));
 					TextView tv_date = (TextView)view;
 					tv_date.setText(sDate);

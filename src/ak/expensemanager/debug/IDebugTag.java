@@ -26,6 +26,7 @@ public interface IDebugTag {
 	final String BANK = "bank";
 	final String CATEGORY_VIEW_TITLE = "Category View";
 	final String YEARLY_VIEW_TITLE = "Yearly View";
+	final String DATE_FORMAT_DD_MMM_WEEKDAY = "dd MMM, EEEE";
 	
 	
 	final String [] DEFAULT_BANKS = {"ICICI","HDFC","AXIS","SBI","IDBI"};

@@ -14,7 +14,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginLeft="10dp"
-        android:text="@string/header_date"
+        android:text="@string/header_category"
         android:layout_height="wrap_content"
         android:layout_weight="1"/>
     

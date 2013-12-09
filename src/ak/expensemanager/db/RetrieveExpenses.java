@@ -163,7 +163,7 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 	}
 
 	String getDate(long date) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd,MMM");
+		SimpleDateFormat sdf = new SimpleDateFormat(IDebugTag.DATE_FORMAT_DD_MMM_WEEKDAY);
 		return sdf.format(new Date(date));
 	}
 

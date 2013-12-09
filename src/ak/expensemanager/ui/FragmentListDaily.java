@@ -70,7 +70,7 @@ public class FragmentListDaily extends Fragment {
 
 		// View v= inflater.inflate(R.layout.fragment_listexpenses, container);
 		View v = inflater.inflate(R.layout.fragment_listexpenses, null);
-		View header = inflater.inflate(R.layout.header_date_notes_amt, null);
+		View header = inflater.inflate(R.layout.header_category_notes_amt, null);
 		lv_yearlyExp = (ListView) v.findViewById(R.id.lv_listexpenses);
 		lv_yearlyExp.addHeaderView(header);
 		tv_title = (TextView) v.findViewById(R.id.tv_title);
@@ -82,7 +82,7 @@ public class FragmentListDaily extends Fragment {
 	}
 
 	public void setDate(String sdate) {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd,MMM");
+		SimpleDateFormat sdf = new SimpleDateFormat(IDebugTag.DATE_FORMAT_DD_MMM_WEEKDAY);
 		Calendar cal = Calendar.getInstance();
 		selectedDate = sdate;
 		Log.d(TAG, "setdate :" + sdate);
@@ -158,7 +158,7 @@ public class FragmentListDaily extends Fragment {
 		super.onResume();
 		ILimitUpdate limitUpdate = new UpdateLimitSharedPref(this.activity);
 		final int limit = limitUpdate.getLimit();
-		Log.d(TAG, "onResume");
+		Log.d(TAG, "onResume="+expenses);
 		adapter = new CustomAdapter(activity, R.layout.row_daily, expenses.getExpenseBetweenDates(this.date.getTime(),
 				nextDay(this.date).getTime()), FROM, TO, 0);
 		
