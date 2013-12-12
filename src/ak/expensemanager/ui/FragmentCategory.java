@@ -11,6 +11,7 @@ import ak.expensemanager.db.IRetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses.DbHelper;
 import ak.expensemanager.debug.IDebugTag;
+import ak.expensemanager.debug.IDebugTag.Months;
 import ak.expensemanager.model.Category;
 import android.app.Activity;
 import android.app.Fragment;
@@ -25,10 +26,11 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FragmentCategory extends Fragment{
+public class FragmentCategory extends Fragment implements IFragmentCategory{
 	
    
     Category category;
+    Months month;
 	final String TAG = IDebugTag.ankitTag + FragmentCategory.class.getSimpleName();
 	ICategory categoryManager;
 	IRetrieveExpenses expenses;
@@ -53,8 +55,9 @@ public class FragmentCategory extends Fragment{
 	}
 
 	
-	public void setCategory(Category category){
+	public void setCategory(Category category,Months month){
 		this.category = category;
+		this.month = month;
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -93,8 +96,10 @@ public class FragmentCategory extends Fragment{
 	public void onResume() {
 		super.onResume();
 		Log.d(TAG,"onResume");
+		long[] startEndDate = UtilityExp.getMonthStartEndDate(month);
 		adapter = new SimpleCursorAdapter(parentActivity, R.layout.row_date_notes_amt, 
-				expenses.getExpenseForCategory(category)
+				expenses.getExpenseForCategory(category,startEndDate[IDebugTag.FIRST_DATE_OF_MONTH],
+					startEndDate[IDebugTag.LAST_DATE_OF_MONTH])
 				, FROM, TO,0);
 	
 		lv_expenses.setAdapter(adapter);

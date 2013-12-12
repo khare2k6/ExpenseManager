@@ -30,11 +30,18 @@ public interface IDebugTag {
 	
 	
 	final String [] DEFAULT_BANKS = {"ICICI","HDFC","AXIS","SBI","IDBI"};
+	public enum FragmentOperation{
+		INIT,
+		REPLACE,
+		REMOVE
+	}
+	public static final int FIRST_DATE_OF_MONTH = 0;
+	public static final int LAST_DATE_OF_MONTH =1;
+	public static final String FRAGMENT = "fragment";
 	
 	
 	
-	
-	 enum Months{
+	 public enum Months{
 			JANUARY,
 			FEBUARY,
 			MARCH,
@@ -46,6 +53,10 @@ public interface IDebugTag {
 			SEPTEMBER,
 			OCTOBER,
 			NOVEMBER,
-			DECEMBER
-		}
+			DECEMBER,
+			YEARLY
+			
+		
+			
+	 }
 }

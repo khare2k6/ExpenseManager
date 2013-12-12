@@ -23,7 +23,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FragmentListYearly extends Fragment{
+public class FragmentListYearly extends Fragment implements IFragmentTime{
 
 	final String TAG = IDebugTag.ankitTag + FragmentListYearly.class.getSimpleName();
 	MatrixCursor matrixCursor ;

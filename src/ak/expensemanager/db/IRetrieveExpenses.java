@@ -3,6 +3,7 @@ package ak.expensemanager.db;
 import java.util.ArrayList;
 import java.util.Set;
 
+import ak.expensemanager.debug.IDebugTag.Months;
 import ak.expensemanager.model.Category;
 import ak.expensemanager.model.Expense;
 import android.database.Cursor;
@@ -37,8 +38,8 @@ public interface IRetrieveExpenses {
 	 * Returns cursor for rows belonging to 
 	 * some Month's specific entries
 	 * */
-	public Cursor getMonthlyExp(int month);
-	public Cursor geMontlyExpenseCursor(int month);
+	public Cursor getMonthlyExp(Months month);
+	//public Cursor geMontlyExpenseCursor(Months month);
 	
 	/**
 	 * returns cursor for expenses for that particular date
@@ -52,13 +53,14 @@ public interface IRetrieveExpenses {
 	
 	/**
 	 * get total expense for 
-	 * a category
+	 * a category for given start and end date
 	 * */
-	public Cursor getExpenseForCategories(Set<String> catSet);
+	public Cursor getExpenseForCategories(Set<String> catSet,long sDate,long eDate);
 	
 	/**
 	 * Get expense for specified category
+	 * for given start and end date
 	 * */
-	public Cursor getExpenseForCategory(Category category);
+	public Cursor getExpenseForCategory(Category category, long sDate, long eDate);
 	
 }

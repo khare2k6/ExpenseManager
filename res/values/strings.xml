@@ -37,6 +37,6 @@
     <string name="header_category">Category</string>
     <string name="header_amount">Amount</string>
     <string name="header_date">Date</string>
-    
+     <string name="spinner_view">spinnerView</string>
     <string name="header_notes">Notes</string>
 </resources>

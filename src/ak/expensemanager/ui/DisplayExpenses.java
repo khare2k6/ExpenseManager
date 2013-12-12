@@ -2,6 +2,7 @@ package ak.expensemanager.ui;
 
 import ak.expensemanager.R;
 import ak.expensemanager.debug.IDebugTag;
+import ak.expensemanager.debug.IDebugTag.Months;
 import ak.expensemanager.model.Category;
 import ak.expensemanager.ui.FragmentAllCategories.IOnCategorySelectedListener;
 import ak.expensemanager.ui.FragmentListMonthly.IOnDateSelectedListener;
@@ -26,70 +27,71 @@ import android.view.View;
 public class DisplayExpenses extends Activity implements IOnMonthSelectedListener, IOnDateSelectedListener,
 IOnCategorySelectedListener,TabListener{
 
-	final static String TAG = IDebugTag.ankitTag + DisplayExpenses.class.getSimpleName();
+	final static String TAG = "ankitkhare" + DisplayExpenses.class.getSimpleName();
 	FragmentManager frgManager = null;
 	 ActionBar actionBar = null;
+		
 	Fragment frg_yearly,frg_monthly,frg_daily,frg_all_categories,frg_category;
 	
+	IFragmentTime frg_type_time = null;
+	IFragmentCategory frg_type_cat = null;
+	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_expenses);
-		
+
 		frgManager = getFragmentManager();
 		frg_yearly = new FragmentListYearly();
 		frg_monthly = new FragmentListMonthly();
 		frg_daily = new FragmentListDaily();
 		frg_all_categories = new FragmentAllCategories();
 		frg_category = new FragmentCategory();
-		
-		  actionBar = getActionBar();
-		  actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-			 actionBar.setDisplayShowTitleEnabled(false);
-			 Tab tab = actionBar.newTab().setText(IDebugTag.YEARLY_VIEW_TITLE).setTabListener(this);
-			 actionBar.addTab(tab);
-			 
-			 tab = actionBar.newTab().setText(IDebugTag.CATEGORY_VIEW_TITLE).setTabListener(this);
-			 actionBar.addTab(tab);
-			
+
+		frg_type_time = (IFragmentTime) frg_yearly;
+		frg_type_cat = (IFragmentCategory) frg_all_categories;
+
+		actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.setDisplayShowTitleEnabled(false);
+		Tab tab = actionBar.newTab().setText(IDebugTag.YEARLY_VIEW_TITLE).setTabListener(this);
+
+		actionBar.addTab(tab);
+
+		tab = actionBar.newTab().setText(IDebugTag.CATEGORY_VIEW_TITLE).setTabListener(this);
+		actionBar.addTab(tab);
+
 		   
 	}
 	
 
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		getMenuInflater().inflate(R.menu.main, menu);
-//		return true;
-//	}
 
 
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		switch(item.getItemId()){
-//		case R.id.action_settings:
-//			Intent intent = new Intent(this,MainActivity.class);
-//			startActivity(intent);
-//			return true;
-//			
-//		case R.id.action_category:
-//			Intent intent2 = new Intent(this,EditCategoryActivity.class);
-//			startActivity(intent2);
-//						return true;
-//		}
-//		return super.onOptionsItemSelected(item);
-//	}
 
-
+	
+	void replaceFragment(Fragment fragment/*,FragmentOperation state2*/){
+		
+		if(fragment instanceof IFragmentTime)
+			frg_type_time = (IFragmentTime) fragment;
+		else
+			frg_type_cat = (IFragmentCategory) fragment;
+			
+		FragmentTransaction transaction = frgManager.beginTransaction();
+	
+		transaction.replace(R.id.fragment_container, fragment);
+		Log.d(TAG,"adding to back stack:"+fragment);
+		transaction.addToBackStack(IDebugTag.FRAGMENT);
+		transaction.commit();
+	}
+	
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		 
-		FragmentTransaction transaction = frgManager.beginTransaction();
-		transaction.replace(R.id.fragment_container, frg_yearly);
-		transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		transaction.commit();
-		
+		Log.d(TAG,"onResume");
+	
 	}
 
 	@Override
@@ -104,11 +106,7 @@ IOnCategorySelectedListener,TabListener{
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-	
-		switch(item.getItemId()){
-		
-		
-		}
+
 		return super.onContextItemSelected(item);
 		
 	}
@@ -136,35 +134,57 @@ IOnCategorySelectedListener,TabListener{
 	@Override
 	public void OnMonthSelected(String month,int position) {
 		//Toast.makeText(this, month +" position "+position, Toast.LENGTH_SHORT).show();
-		((FragmentListMonthly)frg_monthly).setMonth(position);
-		FragmentTransaction transaction = frgManager.beginTransaction();
-		transaction.replace(R.id.fragment_container, frg_monthly);
-		transaction.addToBackStack(null);
-		transaction.commit();
+		Log.d(TAG,"switching to monthly view");
+		((FragmentListMonthly)frg_monthly).setMonth(getMonthFromPosition(position));
+		replaceFragment(frg_monthly/*,FragmentOperation.REPLACE*/);
+
 		
+	}
+
+	 Months getMonthFromPosition(int pos){
+		switch(pos){
+		case 0: return Months.JANUARY;
+		case 1: return Months.FEBUARY;
+		case 2: return Months.MARCH;
+		case 3: return Months.APRIL;
+		case 4: return Months.MAY;
+		case 5: return Months.JUNE;
+		case 6: return Months.JULY;
+		case 7: return Months.AUGUST;
+		case 8: return Months.SEPTEMBER;
+		case 9: return Months.OCTOBER;
+		case 10: return Months.NOVEMBER;
+		case 11: return Months.DECEMBER;
+		default:
+			return null;
+		
+		
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		Log.d(TAG,"Back pressed..");
+		super.onBackPressed();
+	
 	}
 
 
 	@Override
 	public void OnDateSelected(String date) {
 		//Toast.makeText(this, date , Toast.LENGTH_SHORT).show();
+		Log.d(TAG,"switching to daily view");
 		((FragmentListDaily)frg_daily).setDate(date);
-		FragmentTransaction transaction = frgManager.beginTransaction();
-		transaction.replace(R.id.fragment_container, frg_daily);
-		transaction.addToBackStack(null);
-		transaction.commit();
+		replaceFragment(frg_daily/*,FragmentOperation.REPLACE*/);
+	
 	}
 	
 	@Override
-	public void OnCategorySelected(String category) {
-	Log.d(TAG,"Category selected:"+category);
-	((FragmentCategory)frg_category).setCategory(new Category(category, 0));
-	
-	FragmentTransaction transaction = frgManager.beginTransaction();
-	transaction.replace(R.id.fragment_container, frg_category);
-	transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-	transaction.addToBackStack(null);
-	transaction.commit();
+	public void OnCategorySelected(String category,Months month) {
+		Log.d(TAG,"switching to category view specific");
+	((FragmentCategory)frg_category).setCategory(new Category(category, 0),month);
+	replaceFragment(frg_category/*,FragmentOperation.REPLACE*/);
+
 	}
 	
 	// Thote Added
@@ -201,10 +221,14 @@ IOnCategorySelectedListener,TabListener{
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		frgManager.popBackStackImmediate( IDebugTag.FRAGMENT,FragmentManager.POP_BACK_STACK_INCLUSIVE);
+		
 		if(tab.getText().toString().equals(IDebugTag.YEARLY_VIEW_TITLE)){
-			ft.replace(R.id.fragment_container, frg_yearly);
+			Log.d(TAG,"switching to yearly tab");
+			replaceFragment((Fragment)frg_type_time/*,FragmentOperation.REPLACE*/);
 		}	else{
-			ft.replace(R.id.fragment_container, frg_all_categories);
+			Log.d(TAG,"switching to category");
+			replaceFragment((Fragment)frg_type_cat/*,FragmentOperation.REPLACE*/);
 			
 		}
 	}

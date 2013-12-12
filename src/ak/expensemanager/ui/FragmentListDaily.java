@@ -28,7 +28,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FragmentListDaily extends Fragment {
+public class FragmentListDaily extends Fragment implements IFragmentTime {
 
 	final static String TAG = IDebugTag.ankitTag
 			+ FragmentListDaily.class.getSimpleName();
@@ -112,6 +112,7 @@ public class FragmentListDaily extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
+		Log.d(TAG,"onPause");
 		lv_yearlyExp.setAdapter(null);
 		adapter = null;
 

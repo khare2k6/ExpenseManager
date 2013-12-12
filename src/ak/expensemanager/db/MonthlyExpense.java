@@ -1,20 +1,22 @@
 package ak.expensemanager.db;
 
+import ak.expensemanager.debug.IDebugTag.Months;
+
 
 public class MonthlyExpense {
 
-	String month;
+	Months month;
 	int    totalExpense;
 	
-	public MonthlyExpense(String month){
+	public MonthlyExpense(Months month){
 		this.month = month;
 		totalExpense = 0;
 	}
 	
-	public String getMonth() {
+	public Months getMonth() {
 		return month;
 	}
-	public void setMonth(String month) {
+	public void setMonth(Months month) {
 		this.month = month;
 	}
 	public int getTotalExpense() {

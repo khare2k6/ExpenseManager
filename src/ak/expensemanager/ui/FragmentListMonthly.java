@@ -10,6 +10,7 @@ import ak.expensemanager.db.MonthlyExpense;
 import ak.expensemanager.db.RetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses.DbHelper;
 import ak.expensemanager.debug.IDebugTag;
+import ak.expensemanager.debug.IDebugTag.Months;
 import android.app.Activity;
 import android.app.Fragment;
 import android.database.MatrixCursor;
@@ -25,9 +26,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FragmentListMonthly extends Fragment{
+public class FragmentListMonthly extends Fragment implements IFragmentTime{
 	
-    int month;
+    Months month;
 	final String TAG = IDebugTag.ankitTag + FragmentListMonthly.class.getSimpleName();
 	MatrixCursor matrixCursor ;
 	IRetrieveExpenses expenses;
@@ -40,8 +41,8 @@ public class FragmentListMonthly extends Fragment{
 	IOnDateSelectedListener mActivityListner = null;
 
 	
-	public void setMonth(int month){
-		this.month = month;
+	public void setMonth(Months selectedMonth){
+		this.month = selectedMonth;
 	}
 	
 	@Override
@@ -62,7 +63,7 @@ public class FragmentListMonthly extends Fragment{
 		View header_month = inflater.inflate(R.layout.header_date_amt, null);
 		
 		tv_title = (TextView)v.findViewById(R.id.tv_title);
-		tv_title.setText(getMonthName());
+		tv_title.setText(UtilityExp.getMonthName(month));
 		
 		lv_expenses = (ListView)v.findViewById(R.id.lv_listexpenses);
 		lv_expenses.addHeaderView(header_month);
@@ -70,13 +71,8 @@ public class FragmentListMonthly extends Fragment{
 		
 	}
 
-	/**Returns the name of the month selected*/
-	String getMonthName(){
-		Calendar cal = Calendar.getInstance();
-		 cal.set(Calendar.MONTH, month);
-		return cal.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
 	
-	}
+
 	@Override
 	public void onPause() {
 		super.onPause();
