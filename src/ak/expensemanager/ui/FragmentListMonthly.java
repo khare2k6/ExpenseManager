@@ -11,6 +11,7 @@ import ak.expensemanager.db.RetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses.DbHelper;
 import ak.expensemanager.debug.IDebugTag;
 import ak.expensemanager.debug.IDebugTag.Months;
+import ak.expensemanager.model.Month;
 import android.app.Activity;
 import android.app.Fragment;
 import android.database.MatrixCursor;
@@ -49,6 +50,7 @@ public class FragmentListMonthly extends Fragment implements IFragmentTime{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.d(TAG,"onCreate");
+		this.month = Month.getSelectedMonth();
 		if(matrixCursor == null)
 			matrixCursor = new MatrixCursor(FROM);
 		expenses = new RetrieveExpenses(parentActivity);
@@ -95,6 +97,8 @@ public class FragmentListMonthly extends Fragment implements IFragmentTime{
 	public void onResume() {
 		super.onResume();
 		Log.d(TAG,"onResume");
+		month = Month.getSelectedMonth();
+		Log.d("ankitkhare",month.name());
 		if(matrixCursor.getCount() == 0)
 			//addDataToCursor();
 		adapter = new SimpleCursorAdapter(parentActivity, R.layout.row_yearly, expenses.getMonthlyExp(month)

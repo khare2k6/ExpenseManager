@@ -18,11 +18,15 @@ public interface IDebugTag {
 	final String MESSAGE  = "message";
 	final int LIMIT = 1050;
 	final String DEFINED_LIMIT = "limit";
+	final String SELECTED_YEAR = "selectedYear";
+	final String Atm_Tx_mode = "atm_tx_mode";
+	
 	final String YEARLY_VIEW = "Yearly Expenses";
+	final String EXPENSES = " Expenses";
 	final String MONTHLY_VIEW = "Monthly Expenses";
 	final String DAILY_VIEW = "Daily expenses";
 	final String ATM_TRANS = "ATM Withdrawl";
-	final String DEFAULT_CATEGORY []= {"Fuel",ATM_TRANS};
+	final String DEFAULT_CATEGORY []= {"Fuel",ATM_TRANS,"Mobile","Shopping","Grocery","Restaurants","Misc"};
 	final String BANK = "bank";
 	final String CATEGORY_VIEW_TITLE = "Category View";
 	final String YEARLY_VIEW_TITLE = "Yearly View";
@@ -38,12 +42,17 @@ public interface IDebugTag {
 	public static final int FIRST_DATE_OF_MONTH = 0;
 	public static final int LAST_DATE_OF_MONTH =1;
 	public static final String FRAGMENT = "fragment";
+	public static final String CONTEXT_MENU_ITEM_DELETE = "Delete";
+	public static final String CONTEXT_MENU_ITEM_EDIT = "Edit";
+	public static final String PARCEL = "parcel";
+	public static final String EDIT_ENTRY_BUNDLE = "editExpenseBundle";
+	public static final String NEW_ENTRY_BUNDLE = "newExpenseBundle";
 	
 	
 	
 	 public enum Months{
 			JANUARY,
-			FEBUARY,
+			FEBRUARY,
 			MARCH,
 			APRIL,
 			MAY,
@@ -54,9 +63,6 @@ public interface IDebugTag {
 			OCTOBER,
 			NOVEMBER,
 			DECEMBER,
-			YEARLY
-			
-		
-			
+			YEARLY		
 	 }
 }

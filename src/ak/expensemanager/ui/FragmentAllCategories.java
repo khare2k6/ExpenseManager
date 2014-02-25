@@ -9,6 +9,7 @@ import ak.expensemanager.db.RetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses.DbHelper;
 import ak.expensemanager.debug.IDebugTag;
 import ak.expensemanager.debug.IDebugTag.Months;
+import ak.expensemanager.model.Month;
 import android.app.Activity;
 import android.app.Fragment;
 import android.database.Cursor;
@@ -31,7 +32,7 @@ public class FragmentAllCategories extends Fragment implements IFragmentCategory
     
 	final String TAG = IDebugTag.ankitTag + FragmentAllCategories.class.getSimpleName();
 	ICategory category;
-	Months selectedMonth = Months.YEARLY;
+	Months selectedMonth ;//= Months.YEARLY;
 	IRetrieveExpenses expenses;
 	final String [] FROM = {DbHelper.C_CATEGORY,DbHelper.C_AMOUNT};
 	final int [] TO ={R.id.tv_row_category,R.id.tv_row_amount};
@@ -54,7 +55,7 @@ public class FragmentAllCategories extends Fragment implements IFragmentCategory
 		category = new CategoryInfoSharedPref(parentActivity);
 		 arrayAdapter = new ArrayAdapter<Months>(parentActivity, R.layout.spinner_item, Months.values());
 		 arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			
+		 selectedMonth = Month.getSelectedMonth();
 			
 		
 	}
@@ -75,7 +76,6 @@ public class FragmentAllCategories extends Fragment implements IFragmentCategory
 		// adapter = new ArrayAdapter<Months>(parentActivity, android.R.layout.simple_spinner_item, Months.values());
 		 spinnerMonths =(Spinner) v.findViewById(R.id.spinner_months);			
 		spinnerMonths.setAdapter(arrayAdapter);
-		spinnerMonths.setSelection(selectedMonth.ordinal());
 		
 		
 		return v;
@@ -105,6 +105,8 @@ public class FragmentAllCategories extends Fragment implements IFragmentCategory
 	public void onResume() {
 		super.onResume();
 		Log.d(TAG,"onResume");
+		selectedMonth = Month.getSelectedMonth();
+		Log.d("ankitKhare_cat",selectedMonth.name());
 		/*adapter = new SimpleCursorAdapter(parentActivity, R.layout.row_all_months_category, 
 				expenses.getExpenseForCategories(category.getAllCategory().keySet(),
 						UtilityExp.getMonthStartEndDate(Months.YEARLY, IDebugTag.FIRST_DATE_OF_MONTH),
@@ -124,6 +126,8 @@ public class FragmentAllCategories extends Fragment implements IFragmentCategory
 		});
 		
 		spinnerMonths.setOnItemSelectedListener(this);
+		spinnerMonths.setSelection(Month.getSelectedMonth().ordinal());
+		
 	}
 
 
@@ -143,7 +147,13 @@ public class FragmentAllCategories extends Fragment implements IFragmentCategory
 		adapter = null;
 	}
 
-	
+	/**
+	 * to allow selection of month from
+	 * Yearly view/monthly view itself
+	 * */
+	/*public void setMonth(Months month){
+		selectedMonth = month;
+	}*/
 	public interface IOnCategorySelectedListener {
 		public void OnCategorySelected(String category,Months month);
 
@@ -153,11 +163,13 @@ public class FragmentAllCategories extends Fragment implements IFragmentCategory
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int pos,
 			long id) {
-		 selectedMonth = (Months) parent.getItemAtPosition(pos);
+		Log.d("ankitKhare_cat","onItemSelected:"+((Months) parent.getItemAtPosition(pos)).name());
+		 Month.setSelectedMonth((Months) parent.getItemAtPosition(pos));
+		 selectedMonth = Month.getSelectedMonth();
 		
 		lv_expenses.setAdapter(null);
 		
-		long []startEndDate = UtilityExp.getMonthStartEndDate(selectedMonth);
+		long []startEndDate = UtilityExp.getMonthStartEndDate(parentActivity,selectedMonth);
 		Cursor cursor = expenses.getExpenseForCategories(category.getAllCategory().keySet(),
 				startEndDate[IDebugTag.FIRST_DATE_OF_MONTH],startEndDate[IDebugTag.LAST_DATE_OF_MONTH]);
 		adapter = new SimpleCursorAdapter(parentActivity, R.layout.row_all_months_category,

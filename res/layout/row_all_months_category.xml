@@ -4,11 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal" 
     android:weightSum="2">
-    
-    
-
-    
-    <TextView
+      <TextView
         android:id="@+id/tv_row_category"
         android:layout_width="0dp"
         android:layout_marginLeft="10dp"

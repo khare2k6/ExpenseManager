@@ -22,7 +22,6 @@ public class CategoryInfoSharedPref implements ICategory{
 	} 
 	
 	
-	
 	@Override
 	public synchronized boolean  addCategory(String name) {
 		Log.d(TAG,"add category called with name :"+name);

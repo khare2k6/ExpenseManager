@@ -54,7 +54,8 @@ public class FragmentListYearly extends Fragment implements IFragmentTime{
 		//View v = inflater.inflate(R.layout.fragment_listexpenses, container);
 		View v = inflater.inflate(R.layout.fragment_listexpenses, null);
 		tv_title = (TextView)v.findViewById(R.id.tv_title);
-		tv_title.setText(IDebugTag.YEARLY_VIEW);
+		//tv_title.setText(IDebugTag.YEARLY_VIEW);
+		tv_title.setText(UtilityExp.getSelectedYear(parentActivity)+IDebugTag.EXPENSES);
 		
 		lv_expenses = (ListView)v.findViewById(R.id.lv_listexpenses);
 		return v;

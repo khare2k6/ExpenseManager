@@ -1,10 +1,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:yourapp="http://schemas.android.com/apk/res-auto" >
+   
+    <item
+        android:id="@+id/help"
+        android:showAsAction="ifRoom|withText"
+        android:icon="@android:drawable/ic_menu_help"
+        android:title="@string/help"/>
     <item
         android:id="@+id/add_transaction"
         android:showAsAction="ifRoom|withText"
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/addTransaction"/>
+
+      <item
+        android:id="@+id/select_year"
+        android:showAsAction="never"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/selectYear"/>
      <item
         android:id="@+id/add_category"
         android:showAsAction="never"
@@ -15,9 +27,5 @@
         android:showAsAction="never"
          android:icon="@drawable/bank"
         android:title="@string/addBank"/>
-    <item
-        android:id="@+id/update_limit"
-        android:showAsAction="never"
-        android:icon="@drawable/limit"
-        android:title="@string/update_limit"/>
+    
 </menu>

@@ -9,7 +9,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity" >
     <TextView android:id="@+id/tv_titleLimit"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="2dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
@@ -26,10 +26,15 @@
         android:layout_width="fill_parent"
         android:text="@string/updateLimitButton"
         android:layout_height="wrap_content"/>
+             <CheckBox android:layout_width="wrap_content"
+             android:id="@+id/cb_atmTx"
+             android:textSize="15sp"
+    android:layout_height = "wrap_content"
+    android:text= "@string/ATM_mode"/>
 <EditText
     android:id="@+id/et_addCategory"
     android:layout_width="fill_parent"
-    android:layout_marginTop="15dp"
+    android:layout_marginTop="5dp"
     android:hint="@string/addCategoryHintText"
     android:layout_height="wrap_content"/>
 
@@ -39,15 +44,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="@string/addCategoryStr" />
+    
+
     <TextView
         android:id="@+id/tv_header"
-        android:layout_marginTop="20sp"
+        android:layout_marginTop="18sp"
           android:textSize="20sp"
         android:textStyle="bold"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
        android:text="@string/addedCategoryList"/>
-        
+    
     <ListView android:id="@+id/lv_category"
         android:layout_width="fill_parent"
         android:layout_marginTop="10dp"

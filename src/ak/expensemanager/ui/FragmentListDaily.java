@@ -7,14 +7,19 @@ import java.util.Date;
 
 import ak.expensemanager.R;
 import ak.expensemanager.category.ILimitUpdate;
-import ak.expensemanager.category.UpdateLimitSharedPref;
+import ak.expensemanager.category.SettingsSharedPref;
 import ak.expensemanager.db.CustomAdapter;
 import ak.expensemanager.db.IRetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses;
 import ak.expensemanager.db.RetrieveExpenses.DbHelper;
 import ak.expensemanager.debug.IDebugTag;
+import ak.expensemanager.model.Category;
+import ak.expensemanager.model.Expense;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -43,6 +48,7 @@ public class FragmentListDaily extends Fragment implements IFragmentTime {
 	long entry_id = 0;
 	Date date;
 	String selectedDate;
+	Expense editExpense;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -68,20 +74,16 @@ public class FragmentListDaily extends Fragment implements IFragmentTime {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		// View v= inflater.inflate(R.layout.fragment_listexpenses, container);
 		View v = inflater.inflate(R.layout.fragment_listexpenses, null);
 		View header = inflater.inflate(R.layout.header_category_notes_amt, null);
 		lv_yearlyExp = (ListView) v.findViewById(R.id.lv_listexpenses);
 		lv_yearlyExp.addHeaderView(header);
 		tv_title = (TextView) v.findViewById(R.id.tv_title);
 		tv_title.setText(selectedDate);
-	
-		
 		return v;
-
 	}
 
-	public void setDate(String sdate) {
+	public void setDate(String sdate,Context context) {
 		SimpleDateFormat sdf = new SimpleDateFormat(IDebugTag.DATE_FORMAT_DD_MMM_WEEKDAY);
 		Calendar cal = Calendar.getInstance();
 		selectedDate = sdate;
@@ -89,14 +91,13 @@ public class FragmentListDaily extends Fragment implements IFragmentTime {
 		try {
 			this.date = sdf.parse(sdate);
 			cal.setTime(this.date);
-			cal.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
+			cal.set(Calendar.YEAR, UtilityExp.getSelectedYear(context));
 			this.date = cal.getTime();
 			Log.d(TAG, "date setted = " + date);
 
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
@@ -115,7 +116,6 @@ public class FragmentListDaily extends Fragment implements IFragmentTime {
 		Log.d(TAG,"onPause");
 		lv_yearlyExp.setAdapter(null);
 		adapter = null;
-
 	}
 
 	@Override
@@ -124,14 +124,21 @@ public class FragmentListDaily extends Fragment implements IFragmentTime {
 		switch (item.getItemId()) {
 		case 1:
 			Log.d(TAG, "delete pressed.." + item.getItemId());
-
 			expenses.delete(entry_id);
 			adapter.swapCursor(expenses.getExpenseBetweenDates(
 					this.date.getTime(), nextDay(this.date).getTime()));
 			adapter.notifyDataSetChanged();
 			break;
+		case 2:
+			Intent intent = new Intent(activity,FloatingActivity.class);
+			 Bundle bundle = new Bundle();
+			 bundle.putLong("editId", entry_id);
+			 bundle.putParcelable(IDebugTag.PARCEL, editExpense);
+			 intent.putExtra(IDebugTag.EDIT_ENTRY_BUNDLE, bundle);
+			 startActivity(intent);
+			break;
 		}
-
+	
 		return super.onContextItemSelected(item);
 	}
 
@@ -140,6 +147,7 @@ public class FragmentListDaily extends Fragment implements IFragmentTime {
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		menu.add(0, 1, 0, "Delete");
+		menu.add(0,2,0,"Edit");
 	}
 
 	public Date nextDay(Date date) {
@@ -148,7 +156,7 @@ public class FragmentListDaily extends Fragment implements IFragmentTime {
 		int nextDay = cal.get(Calendar.DAY_OF_MONTH) + 1;
 		Log.d(TAG, "next day=" + nextDay);
 		cal.set(Calendar.DAY_OF_MONTH, nextDay);
-		cal.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
+		cal.set(Calendar.YEAR, UtilityExp.getSelectedYear(activity));
 		Log.d(TAG, "next set date=" + cal.getTime());
 
 		return cal.getTime();
@@ -157,52 +165,26 @@ public class FragmentListDaily extends Fragment implements IFragmentTime {
 	@Override
 	public void onResume() {
 		super.onResume();
-		ILimitUpdate limitUpdate = new UpdateLimitSharedPref(this.activity);
+		ILimitUpdate limitUpdate = new SettingsSharedPref(this.activity);
 		final int limit = limitUpdate.getLimit();
 		Log.d(TAG, "onResume="+expenses);
 		adapter = new CustomAdapter(activity, R.layout.row_daily, expenses.getExpenseBetweenDates(this.date.getTime(),
 				nextDay(this.date).getTime()), FROM, TO, 0);
-		
-	/*	adapter.setViewBinder(new ViewBinder() {
-
-			@Override
-			public boolean setViewValue(View view, Cursor cursor, int arg2) {
-
-				switch (view.getId()) {
-				case R.id.tv_row_monthDate:
-
-					long date = cursor.getLong(cursor
-							.getColumnIndex(DbHelper.C_DATE));
-					SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM:EEE");
-					String strdate = sdf.format(new Date(date));
-					TextView tv_date = (TextView) view;
-					tv_date.setText(strdate.toString());
-					break;
-
-				case R.id.tv_row_amount:
-					Integer amount = (int) cursor.getInt(cursor
-							.getColumnIndex(DbHelper.C_AMOUNT));
-					TextView tv_amt = (TextView) view;
-					tv_amt.setText(amount.toString());
-					tv_amt.setTextColor(android.graphics.Color.BLACK);
-					if (amount > limit) {
-						Log.d(TAG, "amount = " + amount);
-						tv_amt.setTextColor(android.graphics.Color.RED);
-					}
-					break;
-				default:
-					return false;
-				}
-				return true;
-			}
-		});*/
 		lv_yearlyExp.setAdapter(adapter);
 		lv_yearlyExp.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			@Override
-			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-					int arg2, long id) {
+			public boolean onItemLongClick(AdapterView<?> parent, View arg1,
+					int pos, long id) {
 				entry_id = id;
+				Calendar cal = Calendar.getInstance();
+				Cursor c = (Cursor)parent.getItemAtPosition(pos);
+				cal.setTimeInMillis(c.getLong(c.getColumnIndex(DbHelper.C_DATE)));
+				
+				editExpense = new Expense(c.getInt(c.getColumnIndex(DbHelper.C_AMOUNT)),
+						new Category(c.getString(c.getColumnIndex(DbHelper.C_CATEGORY)),1050), 
+						c.getString(c.getColumnIndex(DbHelper.C_NOTES)),
+						cal);
 				return false;
 			}
 		});
@@ -225,5 +207,4 @@ public class FragmentListDaily extends Fragment implements IFragmentTime {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 	}
-
 }

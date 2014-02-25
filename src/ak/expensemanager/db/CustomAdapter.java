@@ -5,7 +5,7 @@ import java.util.Date;
 
 import ak.expensemanager.R;
 import ak.expensemanager.category.ILimitUpdate;
-import ak.expensemanager.category.UpdateLimitSharedPref;
+import ak.expensemanager.category.SettingsSharedPref;
 import ak.expensemanager.db.RetrieveExpenses.DbHelper;
 import ak.expensemanager.debug.IDebugTag;
 import android.content.Context;
@@ -25,7 +25,7 @@ public class CustomAdapter extends SimpleCursorAdapter{
 	public CustomAdapter(Context context, int layout, Cursor c, String[] from,
 			int[] to, int flags) {
 		super(context, layout, c, from, to, flags);
-		limitUpdate = new UpdateLimitSharedPref(context);
+		limitUpdate = new SettingsSharedPref(context);
 		 limit = limitUpdate.getLimit();
 	}
 

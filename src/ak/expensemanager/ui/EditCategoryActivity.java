@@ -9,21 +9,20 @@ import ak.expensemanager.R;
 import ak.expensemanager.category.CategoryInfoSharedPref;
 import ak.expensemanager.category.ICategory;
 import ak.expensemanager.category.ILimitUpdate;
-import ak.expensemanager.category.UpdateLimitSharedPref;
+import ak.expensemanager.category.SettingsSharedPref;
 import ak.expensemanager.debug.IDebugTag;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,7 +39,9 @@ public class EditCategoryActivity extends Activity {
 	View.OnClickListener listner = null;
 	ICategory categoryInfo = null;
 	ListView lv_categoryList = null;
-	ArrayAdapter<String>adapter = null;
+	CheckBox cbAtmMode;
+	ArrayAdapter<String>adapter;
+	SettingsSharedPref pref ;
 	String delete_category = null;
 	ILimitUpdate updatelimit = null;
 	
@@ -54,8 +55,9 @@ public class EditCategoryActivity extends Activity {
 		et_updateLimit = (EditText)findViewById(R.id.et_updateLimit);
 		lv_categoryList = (ListView)findViewById(R.id.lv_category);
 		btn_updateLimit = (Button)findViewById(R.id.btn_updateLimit);
+		cbAtmMode = (CheckBox)findViewById(R.id.cb_atmTx);
+		pref = new SettingsSharedPref(this);
 		init();
-		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 	
@@ -65,14 +67,25 @@ public class EditCategoryActivity extends Activity {
 	 * */
 	void init(){
 		categoryInfo = new CategoryInfoSharedPref(this);
-		updatelimit =  new UpdateLimitSharedPref(this);
+		updatelimit =  new SettingsSharedPref(this);
+
 	}
 
+	void updateAtmMode(){
+		Log.d(TAG,"updateAtmMode:"+cbAtmMode.isChecked());
+		
+		boolean stateChanged = (cbAtmMode.isChecked() == pref.getAtmTxEnabledMode());
+		if(!stateChanged){
+			Log.d(TAG,"Setting ATM mode to:"+cbAtmMode.isChecked());
+			pref.setAtmTxEnabledMode(cbAtmMode.isChecked());
+		}
+	}
 	@Override
 	protected void onPause() {
 		
 		super.onPause();
 		Log.d(TAG,"onPause");
+		updateAtmMode();
 	}
 
 	@Override
@@ -84,13 +97,13 @@ public class EditCategoryActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				
+
 				switch(v.getId()){
 				case R.id.btn_addCategory:
 					Log.d(TAG,"add category clicked");
 					if(categoryInfo == null)
 						init();
-					
+
 					if(et_addCategory.getText().toString().isEmpty()){
 						Toast.makeText(EditCategoryActivity.this, IDebugTag.FILL_CATEGORY, Toast.LENGTH_SHORT).show();
 						return;
@@ -100,12 +113,12 @@ public class EditCategoryActivity extends Activity {
 					}
 					break;
 				case R.id.btn_updateLimit:
-					
+
 					if(et_updateLimit.getText().toString().isEmpty()){
 						Toast.makeText(EditCategoryActivity.this, "Empty!", Toast.LENGTH_SHORT).show();
 						return;
 					}else{
-						
+
 						if(updatelimit.setLimit(Integer.parseInt(et_updateLimit.getText().toString())))
 							Toast.makeText(EditCategoryActivity.this, "Updated", Toast.LENGTH_SHORT).show();
 						else
@@ -134,7 +147,7 @@ public class EditCategoryActivity extends Activity {
 		});
 		registerForContextMenu(lv_categoryList);
 		et_updateLimit.setHint(((Integer)updatelimit.getLimit()).toString());
-		
+		cbAtmMode.setChecked(pref.getAtmTxEnabledMode());
 	}
 
 	

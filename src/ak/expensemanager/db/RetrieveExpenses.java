@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 
+import ak.expensemanager.category.SettingsSharedPref;
 import ak.expensemanager.debug.IDebugTag;
 import ak.expensemanager.debug.IDebugTag.Months;
 import ak.expensemanager.model.Category;
@@ -73,7 +74,7 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 	}
 	
 	public int getTotalExpenseForCategory(Category category,Months month){
-		long[] startEndDate = UtilityExp.getMonthStartEndDate(month);
+		long[] startEndDate = UtilityExp.getMonthStartEndDate(context,month);
 		Cursor cursor = getEntriesForCategory(category, 
 				startEndDate[IDebugTag.FIRST_DATE_OF_MONTH],startEndDate[IDebugTag.LAST_DATE_OF_MONTH]);
 		if(cursor.getCount() > 0){
@@ -133,14 +134,26 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 				null, null, null);
 		
 	}
-
+	private String[] getSelectionArgsForYear(){
+		int year = UtilityExp.getSelectedYear(context);
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, 0, 1);//1st day of this year
+		Long firstDayOfTheYear = cal.getTimeInMillis();
+		cal.set(year, 11, 31);//last day of this year
+		Long lastDayOfTheYear = cal.getTimeInMillis();
+		return new String[]{firstDayOfTheYear.toString(),lastDayOfTheYear.toString()};
+	}
+	
 	@Override
 	public int getMonthlyExpense(String month) {
 		Log.d(TAG, "getMonthlyExpense for " + month);
 		int totalExp = 0;
 
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
-		Cursor cursor = db.query(DbHelper.TABLE_NAME, null, null, null, null,
+		String selection = DbHelper.C_DATE + " BETWEEN ? AND ?";
+		/*Cursor cursor = db.query(DbHelper.TABLE_NAME, null, null, null, null,
+				null, null);*/
+		Cursor cursor = db.query(DbHelper.TABLE_NAME, null, selection, getSelectionArgsForYear(), null,
 				null, null);
 		if (cursor.getCount() > 0) {
 			cursor.moveToFirst();
@@ -220,6 +233,10 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 	 * withdrawl
 	 * */
 	boolean isAtmTransaction(Cursor cursor){
+		SettingsSharedPref pref = new SettingsSharedPref(context);
+		boolean atmModeEnabled = pref.getAtmTxEnabledMode();
+		if(atmModeEnabled)
+			return false;
 		String category = cursor.getString(cursor.getColumnIndex(DbHelper.C_CATEGORY));
 		return category.equalsIgnoreCase(IDebugTag.ATM_TRANS);
 	}
@@ -244,11 +261,7 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 			previousDateLong = startDateLong;
 			// sum up expense of single days
 			do {
-				if(isAtmTransaction(cursor)){
-					Log.d(TAG,"skipping daily entry for:"+cursor.getInt(cursor
-						.getColumnIndex(DbHelper.C_AMOUNT)));
-					continue;
-				}
+				
 				startDateLong = cursor.getLong(cursor
 						.getColumnIndex(DbHelper.C_DATE));
 				startDateInt = Integer.parseInt((new SimpleDateFormat("dd"))
@@ -256,7 +269,11 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 				Log.d(TAG, "sDate =" + startDateInt);
 
 				if (startDateInt == previousDate) {
-					
+					if(isAtmTransaction(cursor)){
+						Log.d(TAG,"skipping daily entry for:"+cursor.getInt(cursor
+							.getColumnIndex(DbHelper.C_AMOUNT)));
+						continue;
+					}
 					dailExp += cursor.getInt(cursor
 							.getColumnIndex(DbHelper.C_AMOUNT));
 				} else {
@@ -286,13 +303,13 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
 		
 		// start and end date in ms
-		long[] startEndDate = UtilityExp.getMonthStartEndDate(month);
+		long[] startEndDate = UtilityExp.getMonthStartEndDate(context,month);
 		
 
 		String selection = DbHelper.C_DATE + " BETWEEN " + startEndDate[IDebugTag.FIRST_DATE_OF_MONTH] + " AND "
 				+ startEndDate[IDebugTag.LAST_DATE_OF_MONTH];
 		Cursor cursor = db.query(DbHelper.TABLE_NAME, null, selection, null,
-				null, null, null);
+				null, null, DbHelper.C_DATE);
 		Log.d(TAG,
 				"geMontlyExpenseCursor reutning cursor.getcoutn="
 						+ cursor.getCount());
@@ -330,7 +347,7 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 					new String[]{DbHelper.C_ID, DbHelper.C_DATE,DbHelper.C_NOTES,DbHelper.C_AMOUNT},
 					DbHelper.C_CATEGORY +" = ?",
 					new String[]{category.getName()},
-					null, null, null);
+					null, null, DbHelper.C_DATE);
 		}
 		else{
 		
@@ -345,6 +362,16 @@ public class RetrieveExpenses implements IRetrieveExpenses {
 	}
 
 	
-	
+	public void edit(Expense expense,long id){
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		
+		ContentValues values = new ContentValues();
+		values.put(DbHelper.C_DATE, expense.getCalendar().getTimeInMillis());
+		values.put(DbHelper.C_AMOUNT, expense.getAmount());
+		values.put(DbHelper.C_CATEGORY, expense.getCategory().getName());
+		values.put(DbHelper.C_NOTES, expense.getNote());
+
+		db.update(DbHelper.TABLE_NAME, values, DbHelper.C_ID +" = ?", new String[]{String.valueOf(id)});
+	}
 
 }

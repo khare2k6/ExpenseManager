@@ -14,6 +14,8 @@
     <string name="addedContactsList">Added Contacts List</string>
     <string name="chooseCategory">select</string>
     <string name="submit">Add</string>
+    <string name="selectYear">Select Year</string>
+    <string name="help">Help</string>
     <string name="hint_category">Note here</string>
     <string name="addCategoryStr">Add Category</string>
     <string name="addCategoryHintText">Add Category here</string>
@@ -38,5 +40,27 @@
     <string name="header_amount">Amount</string>
     <string name="header_date">Date</string>
      <string name="spinner_view">spinnerView</string>
+     <string name="title_back_exit_button">Back</string>
     <string name="header_notes">Notes</string>
+     <string name="select_year">Select Year</string>
+     <string name="ATM_mode">Enable ATM as Expense</string>
+     
+     <!-- For help  -->
+     <string name="title_sms_transaction">Debit Card Transaction</string>
+    <string name="title_manual_transaction">Manual Transaction</string>
+    <string name="title_menu_options">Menu Options</string>
+    <string name="title_add_category">New Category</string>
+    <string name="title_add_bank">Add Bank</string>
+    <string name="title_delete_entry">Delete a Record</string>
+    <string name="title_atm_tx_enable">ATM transaction mode</string>
+    <string name="desription_sms_transaction">On Receiving Transaction SMS,small window will pop up.Enter few details like category some extra notes and click \"Add\"</string>
+         <string name="desription_manual_transaction">To add any cash transactions,click on + sign on top right corner of the screen</string>
+    <string name="desription_add_category">Add new category name in the text box and press \"Add\".Long press on category
+       to delete it.</string>
+    <string name="desription_menu_options">Goto settings by clicking at the options key to add bank,categories etc.</string>
+  <string name="desription_add_bank">Add your bank name in \"Add Contact" setting\.Long press to delete existing entry</string>
+  <string name="desription_delete_record">Long press on a entry in \"Daily View"\ to edit or delete that entry.</string>
+      <string name="desription_atm_tx_mode">If this is enabled,the entries made by you in \"ATM Withdrawal" category,will be added in the total expense.
+          Otherwise it wont add up to total expense, only entry will be shown.\</string>
+ 
 </resources>

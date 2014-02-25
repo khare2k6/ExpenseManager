@@ -8,7 +8,7 @@ import android.util.Log;
 public class SmsDecipher {
 	public static final String TAG = "SmsDecipher";
 
-	int mAmount = -1;
+	int mAmount = 0;
 	final int SPACE = 32;
 	final int COMMA = 44;
 	final int DOT = 46;
@@ -29,7 +29,8 @@ public class SmsDecipher {
 
 	public SmsDecipher(String sms, Context context) {
 		retrieveWords = RetrieveTargetKeywords.getInstance(context);
-		init(context);
+		if(targetWordList == null || currencyList == null)
+			init(context);
 		DecipherAmountFromMessage(sms);
 		
 		

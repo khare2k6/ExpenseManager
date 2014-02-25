@@ -6,6 +6,7 @@ import java.util.Set;
 import ak.expensemanager.debug.IDebugTag.Months;
 import ak.expensemanager.model.Category;
 import ak.expensemanager.model.Expense;
+import android.content.ContentValues;
 import android.database.Cursor;
 
 
@@ -63,4 +64,12 @@ public interface IRetrieveExpenses {
 	 * */
 	public Cursor getExpenseForCategory(Category category, long sDate, long eDate);
 	
+	/**
+	 * Function to allow editing already existing entry
+	 * params:
+	 * new Content values,
+	 * id of the row to be edited 
+	 * */
+	
+	public void edit(Expense expense,long id);
 }

@@ -1,15 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-    
-    
+    android:id="@+id/parent"
+    android:layout_height="match_parent">
+    <!-- for inmobi -->
+
     <LinearLayout
+        android:id="@+id/bannerLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true" >
+
+        <com.inmobi.monetization.IMBanner
+            android:id="@+id/banner"
+            android:layout_width="320dp"
+            android:layout_height="50dp"
+            adSize="15"
+            appId="7a33ffe39d3e4ab2a8d7290586fddd99" />
+    </LinearLayout>
+  
+       <!-- <Button
+        android:id="@+id/btn_back_exit"
+        android:layout_width="fill_parent"
+       	android:layout_above="@id/bannerLayout"
+        android:text="@string/title_back_exit_button"
+        android:layout_height="wrap_content"/>-->
+
+         
+         <LinearLayout
         android:id = "@+id/fragment_container"
         android:layout_width="fill_parent"
+       
         android:orientation="vertical"
-        android:layout_height="fill_parent"/>"
+        android:layout_height="fill_parent"/>
+ 
+
     <!-- 
     
 <fragment
@@ -25,4 +51,4 @@
     android:layout_height="fill_parent"/>
      -->
 
-</LinearLayout>
+</RelativeLayout>

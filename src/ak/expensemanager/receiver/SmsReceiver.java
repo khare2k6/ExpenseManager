@@ -1,9 +1,13 @@
 package ak.expensemanager.receiver;
 
+import java.util.Calendar;
+
 import ak.expensemanager.contacts.ContactInfoSharedPref;
 import ak.expensemanager.contacts.IContactInfo;
 import ak.expensemanager.debug.IDebugTag;
+import ak.expensemanager.model.Expense;
 import ak.expensemanager.model.RetrieveTargetKeywords;
+import ak.expensemanager.model.SmsDecipher;
 import ak.expensemanager.ui.FloatingActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,12 +37,19 @@ public class SmsReceiver extends BroadcastReceiver {
 				//Toast.makeText(context, "Message:"+msg+"  Num:"+num, Toast.LENGTH_SHORT).show();
 				if(searchSender(msg,num,context)){
 					Log.d(TAG,"sender :"+num+" found,starting activity");
-					Intent intentAct = new Intent(context,FloatingActivity.class);
-					intentAct.putExtra(IDebugTag.MESSAGE, msg);
-					intentAct.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					
-					if(RetrieveTargetKeywords.getInstance(context).isExpense(msg.toLowerCase()))
+				
+					if(RetrieveTargetKeywords.getInstance(context).isExpense(msg.toLowerCase())){
+						Intent intentAct = new Intent(context,FloatingActivity.class);
+						intentAct.putExtra(IDebugTag.MESSAGE, msg);
+						intentAct.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						Expense exp = new Expense(new SmsDecipher(msg, context).getAmount(),
+								null, "", Calendar.getInstance());
+						Bundle bundle = new Bundle();
+						bundle.putParcelable(IDebugTag.PARCEL, exp);
+						intentAct.putExtra(IDebugTag.NEW_ENTRY_BUNDLE, bundle);
+						
 						context.startActivity(intentAct);
+					}
 				}		
 			}
 		}

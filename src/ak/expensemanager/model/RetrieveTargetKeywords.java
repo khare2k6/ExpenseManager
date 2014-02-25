@@ -74,8 +74,14 @@ public class RetrieveTargetKeywords {
 	public boolean isExpense(String msg){
 		for(String targetWord: listOfTargetWords){
 			if(msg.contains(targetWord)){
-				Log.d(TAG,"start the activity!");
-				return true;
+				for(String currency: currencyList){
+					if(msg.contains(currency)){
+						Log.d(TAG,"start the activity!");
+						return true;
+					}
+				}
+					
+				
 			}
 		}
 		return false;

@@ -1,11 +1,7 @@
 package ak.expensemanager.ui;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
 
 import ak.expensemanager.R;
 import ak.expensemanager.category.CategoryInfoSharedPref;
@@ -26,7 +22,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -46,6 +41,7 @@ public class FloatingActivity extends Activity
 	final static String TAG = IDebugTag.ankitTag
 			+ FloatingActivity.class.getSimpleName();
 	EditText et_amount = null;
+	Expense expense = null;
 	Spinner spinner = null;
 	ArrayAdapter<String> adapter = null;
 	String[] arrCategory = null;
@@ -56,7 +52,7 @@ public class FloatingActivity extends Activity
 	Button btnChangeDate;
 	TextView txtTime;
 	Button btnChangeTime;
-	
+	long edit_entry_id = -1;
 	IRetrieveExpenses expenses = null;
 	ICategory category = null;
 
@@ -69,7 +65,7 @@ public class FloatingActivity extends Activity
 		
 		setupViews(getIntent());
 		
-		setCurrentDate();
+		//setCurrentDate(Calendar.getInstance());
 		
 		expenses = new RetrieveExpenses(this);
 		category = new CategoryInfoSharedPref(this);
@@ -99,40 +95,89 @@ public class FloatingActivity extends Activity
 		}
 	}
 	
+	public Expense getExpFromIntent(Intent intent){
+		Expense temp = null;
+		Bundle bundle = null;
+
+		if(intent.hasExtra(IDebugTag.NEW_ENTRY_BUNDLE)) 
+			bundle = intent.getBundleExtra(IDebugTag.NEW_ENTRY_BUNDLE);
+		else{		
+			bundle =intent.getBundleExtra(IDebugTag.EDIT_ENTRY_BUNDLE);
+			edit_entry_id = bundle.getLong("editId");
+		}
+
+		//Bundle bundle = intent.getBundleExtra("editExpenseBundle");
+
+		temp = (Expense)bundle.getParcelable(IDebugTag.PARCEL);
+		if(temp == null)
+			temp = new Expense(0, new Category(IDebugTag.ATM_TRANS, 0), null, Calendar.getInstance());
+
+		//spinner.setSelection(adapter.getPosition(exp.getCategory().toString()));
+		Log.d("ankit_khare_floating",""+temp.getAmount());
+		Log.d("ankit_khare_floating",""+temp.getCategory());
+		Log.d("ankit_khare_floating",""+temp.getNote());
+		Log.d("ankit_khare_floating",""+temp.getCalendar());
+
+
+		return temp;
+	}
+
 	private void setupViews(Intent intent) {
 		txtDate = (TextView) findViewById(R.id.date);
 		txtTime = (TextView) findViewById(R.id.time);
-		
+
 		btnChangeDate = (Button) findViewById(R.id.btn_change_date);
 		btnChangeDate.setOnClickListener(this);
 		btnChangeTime = (Button) findViewById(R.id.btn_change_time);
 		btnChangeTime.setOnClickListener(this);
-		
+
 		spinner = (Spinner) findViewById(R.id.spn_category);
 		et_amount = (EditText) findViewById(R.id.et_amount);
 		et_notes = (EditText) findViewById(R.id.et_notes);
 		btn_submit = (Button) findViewById(R.id.btn_submitExp);
 		btn_submit.setOnClickListener(this);
+
+		expense = getExpFromIntent(intent);
+
+
+		//		if (intent != null) { temp
+		//			decipherAmount(intent.getStringExtra(IDebugTag.MESSAGE));
+		//		}
+
+	}
+	private void populateData(Expense exp){
+		et_amount.setText(""+(exp.getAmount() == 0 ?"":exp.getAmount()));
+		et_notes.setText(exp.getNote());
 		
-		if (intent != null) {
-			decipherAmount(intent.getStringExtra(IDebugTag.MESSAGE));
+		int index = 0;
+		
+		Category category = exp.getCategory();
+		if(category != null){
+			ArrayList<String> categoryList = getCategoryList();
+			index = categoryList.indexOf(category.getName());
 		}
+		spinner.setSelection(index);
 		
+		Calendar date = exp.getCalendar();
+		setCurrentDate(date);
 	}
 	
 	private void decipherAmount(String sms) {
 		// Ankit : This logic should be moved out of this activity
 		int amount = new SmsDecipher(sms,this).getAmount();
-		if (amount > 0) {
+		if (amount >= 0 && amount < 75000) {
 			et_amount.setText("" + amount);
+		}else{
+			Log.d(TAG,"Amount too high to be transaction");
+			finish();
 		}
 	}
 	
-	private void setCurrentDate() {
-		Calendar cal = Calendar.getInstance();
+	private void setCurrentDate(Calendar date) {
+		Calendar cal = date;//Calendar.getInstance();
 		
 		setDate(cal.get(Calendar.YEAR), 
-				cal.get(Calendar.MONTH),
+				cal.get(Calendar.MONTH)+1,
 				cal.get(Calendar.DAY_OF_MONTH));
 		
 		setTime(cal.get(Calendar.HOUR), 
@@ -146,7 +191,9 @@ public class FloatingActivity extends Activity
 	}
 	
 	private void setTime(int hour, int mins) {
-		txtTime.setText(hour + ":" +  mins);
+		txtTime.setText(String.format("%02d",hour)+ ":" +  String.format("%02d",mins));
+		
+		//txtTime.setText(hour + ":" +  mins);
 	}
 
 	private void changeDate() {
@@ -177,7 +224,12 @@ public class FloatingActivity extends Activity
 		Category category = new Category(strCategory, -1);
 		int amount = Integer.parseInt(strAmount);
 		
-		expenses.addExpense(new Expense(amount, category, note, cal));
+		if(edit_entry_id == -1){
+			expenses.addExpense(new Expense(amount, category, note, cal));
+		}else{
+			expenses.edit(new Expense(amount, category, note, cal),edit_entry_id);
+			edit_entry_id =-1;
+		}
 		
 		finish();
 	}
@@ -191,10 +243,8 @@ public class FloatingActivity extends Activity
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
-
-	}
+			}
 
 	@Override
 	protected void onStop() {
@@ -207,14 +257,13 @@ public class FloatingActivity extends Activity
 	@Override
 	protected void onResume() {
 		super.onResume();
-
-		
-
 		ArrayList<String> list = getCategoryList();
 		adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, list);
 		spinner.setAdapter(adapter);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		populateData(expense);
+		//spinner.setSelection(3);
 		if (spinner.getCount() == 0) {
 			Toast.makeText(this, "Adding Default Category!", Toast.LENGTH_LONG)
 					.show();
@@ -276,7 +325,7 @@ public class FloatingActivity extends Activity
 		}
 		cal.set(year, month, day);
 		
-		setDate(year, month, day);
+		setDate(year, month +1, day); // 
 	}
 
 	public static class TimePickerFragment extends DialogFragment {
